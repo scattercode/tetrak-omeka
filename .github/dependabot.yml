@@ -29,3 +29,7 @@ updates:
     commit-message:
       prefix: "build"
       include: "scope"
+    ignore:
+      # Our own image, built locally from omeka/ and on no registry; looking it
+      # up failed the whole job. The docker ecosystem above covers its base.
+      - dependency-name: "tetrak/omeka-s"
