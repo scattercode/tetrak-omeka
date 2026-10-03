@@ -1,0 +1,56 @@
+# The same Trivy scans as CI, weekly, so a vulnerability disclosed in Debian,
+# PHP or MariaDB between changes still surfaces. The image is rebuilt from
+# scratch, which also picks up the Debian fixes the Dockerfile applies.
+name: Security
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trivy:
+    name: Trivy scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the image
+        run: docker build --pull --no-cache -t tetrak/omeka-s:scan omeka
+
+      - name: Scan the image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: image
+          image-ref: tetrak/omeka-s:scan
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+      # gosu is skipped: the entrypoint uses it once, to drop root at start-up,
+      # and its Go standard library CVEs (crypto/tls, net/http and the like)
+      # are in code it never runs -- the gosu maintainers document this. The
+      # image's own Ubuntu packages are still scanned. Reviewed 2026-10-03.
+      - name: Scan the database image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: image
+          image-ref: mariadb:11.4
+          skip-files: usr/local/bin/gosu
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+      - name: Scan Dockerfile and compose
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: config
+          scan-ref: .
+          trivyignores: .trivyignore
+          exit-code: "1"
+          severity: HIGH,CRITICAL

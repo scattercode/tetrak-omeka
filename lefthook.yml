@@ -1,0 +1,31 @@
+# Lefthook: git hooks manager. Install once with `lefthook install`; the
+# linters it runs are `brew install hadolint shellcheck actionlint
+# markdownlint-cli2`. Without lefthook, `git config core.hooksPath .githooks`
+# still activates the Conventional Commits check on its own.
+#
+# The same checks run in CI, so a missing linter here only moves the failure
+# from your commit to your pull request.
+
+pre-commit:
+  parallel: true
+  commands:
+    hadolint:
+      glob: "**/Dockerfile"
+      run: hadolint {staged_files}
+    shellcheck:
+      glob: "*.sh"
+      run: shellcheck {staged_files}
+    actionlint:
+      glob: ".github/workflows/*.{yml,yaml}"
+      run: actionlint {staged_files}
+    markdownlint:
+      glob: "*.md"
+      run: markdownlint-cli2 {staged_files}
+    compose:
+      glob: "{compose.yaml,.env.example}"
+      run: docker compose --env-file .env.example config -q
+
+commit-msg:
+  commands:
+    conventional:
+      run: .githooks/commit-msg {1}

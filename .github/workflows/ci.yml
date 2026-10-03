@@ -1,6 +1,14 @@
-# The stack must keep building and coming up: that is this repository's
-# promise of a stable Omeka. Builds the image from the pinned release, starts
-# the stack with the example credentials, and waits for Omeka to answer.
+# Checks on every push to main and every pull request. Four jobs, each a
+# required check:
+#
+#   Lint                          hadolint, shellcheck, actionlint, markdownlint,
+#                                 and the compose file -- the pre-commit hooks again
+#   Omeka stack comes up          this repository's promise of a stable Omeka:
+#                                 build from the pinned release, start, and answer
+#   Trivy scan                    HIGH/CRITICAL fixed vulnerabilities in the built
+#                                 image, and misconfiguration in Dockerfile and compose
+#   Shared templates are current  cliff.toml and .githooks/commit-msg match
+#                                 scattercode/release-pipelines
 name: CI
 
 on:
@@ -17,6 +25,33 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Dockerfile
+        uses: hadolint/hadolint-action@v3.5.0
+        with:
+          dockerfile: omeka/Dockerfile
+
+      - name: Shell scripts
+        run: shellcheck omeka/*.sh
+
+      - name: Workflows
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
+      - name: Markdown
+        uses: DavidAnson/markdownlint-cli2-action@v24
+        with:
+          globs: "**/*.md"
+
+      - name: Compose file
+        run: docker compose --env-file .env.example config -q
+
   stack:
     name: Omeka stack comes up
     runs-on: ubuntu-latest
@@ -24,17 +59,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Validate compose.yaml
+      - name: Build and start
         run: |
           cp .env.example .env
-          docker compose config -q
-
-      - name: Build and start
-        run: docker compose up -d --build --wait
+          docker compose up -d --build --wait
 
       - name: Omeka answers with its installer
         run: |
-          for attempt in $(seq 1 30); do
+          for _ in $(seq 1 30); do
             if curl -fsSL http://127.0.0.1:8080/ | grep -q "Omeka"; then
               echo "Omeka is up"; exit 0
             fi
@@ -46,3 +78,53 @@ jobs:
       - name: Stop
         if: always()
         run: docker compose down -v
+
+  trivy:
+    name: Trivy scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the image
+        run: docker build -t tetrak/omeka-s:ci omeka
+
+      # The base image often lags Debian's security fixes; the Dockerfile
+      # applies them, and this fails if one with a fix is still missing.
+      - name: Scan the image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: image
+          image-ref: tetrak/omeka-s:ci
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+
+      - name: Scan Dockerfile and compose
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: config
+          scan-ref: .
+          trivyignores: .trivyignore
+          exit-code: "1"
+          severity: HIGH,CRITICAL
+
+  # cliff.toml and .githooks/commit-msg are copies of the shared templates in
+  # scattercode/release-pipelines. They have to be real files here -- git-cliff
+  # reads one from the repository root and git runs the other from the
+  # checkout -- so this is what stops a copy drifting unnoticed.
+  templates:
+    name: Shared templates are current
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check out the shared templates
+        uses: actions/checkout@v7
+        with:
+          repository: scattercode/release-pipelines
+          ref: v1
+          path: .release-pipelines
+
+      - name: Compare
+        run: ./.release-pipelines/sync.sh --check .

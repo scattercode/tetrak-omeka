@@ -1,0 +1,5 @@
+# DS-0002: "Specify at least one USER command with a non-root user."
+# The official php:*-apache images run Apache's parent process as root so it
+# can bind port 80, and serve every request as www-data; that is the design of
+# the base image, not an oversight here. Reviewed 2026-10-03.
+DS-0002
