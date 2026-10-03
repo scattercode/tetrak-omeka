@@ -8,7 +8,7 @@
 # The release zip is pinned by version and checksum. To move to a new release,
 # change both build args together; the build fails if they disagree.
 
-FROM php:8.2-apache
+FROM php:8.5-apache
 
 # Fail a RUN whose pipeline fails anywhere, not only at its last command: the
 # checksum check below is a pipe.
