@@ -77,3 +77,9 @@ pip install "tetrak[all] @ git+https://github.com/scattercode/tetrak@5.14.0"
 Pinning a tag rather than a checkout keeps this demo working for anyone who
 clones it on its own, and makes it an honest test of Tetrak as other people get
 it.
+
+## Licence
+
+MIT; see [LICENSE](LICENSE). Omeka S itself is GPL-3.0 and is not
+redistributed here: `omeka/Dockerfile` downloads the official release when the
+image is built. Collection material carries its own rights, recorded beside it.
