@@ -10,13 +10,22 @@
 
 FROM php:8.2-apache
 
+# Fail a RUN whose pipeline fails anywhere, not only at its last command: the
+# checksum check below is a pipe.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 ARG OMEKA_VERSION=4.1.1
 ARG OMEKA_SHA256=b53c9eeb5e8479c6991de3c47197abac59be577884e7224f92f87758f2f14f7f
 
 # pdo_mysql, mbstring, xml and fileinfo are what Omeka's composer.json requires;
 # mbstring, xml and fileinfo already ship with the PHP image. ImageMagick is the
 # thumbnailer Omeka finds on its own; without one, uploads get no derivatives.
+# The upgrade applies Debian's security fixes, which the official PHP image
+# often lags: without it Trivy found 48 HIGH vulnerabilities with fixes
+# available, all in the base packages. Omeka and PHP stay pinned; only the
+# operating system's patches float.
 RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends imagemagick unzip \
     && docker-php-ext-install pdo_mysql \
     && a2enmod rewrite \

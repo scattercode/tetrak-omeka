@@ -38,6 +38,27 @@ way: anything the image needs goes in `omeka/`.
 - The Compose project is named `tetrak-omeka`, so its volumes are
   `tetrak-omeka_db-data` and `tetrak-omeka_omeka-files`.
 
+## Checks and releases
+
+Set up like the other Tetrak repositories; `CONTRIBUTING.md` has the table.
+
+- **Pre-commit (Lefthook):** hadolint, shellcheck, actionlint, markdownlint and
+  `docker compose config` on what is staged; the commit-msg hook enforces
+  Conventional Commits. CI runs the same, so a skipped hook only moves the
+  failure to the pull request.
+- **CI:** Lint, the stack smoke test, Trivy (the built image and the
+  Dockerfile/compose configuration), the shared-template drift check, and the
+  PR-title check. All are required by the `main` ruleset; `main` takes nothing
+  by direct push except the `scattercode-release` App's release commit.
+- **`.trivyignore` and the gosu skip** in `security.yml` record accepted
+  findings with their reasons. Add to them only with a reason and a date.
+- **The image upgrades Debian's packages at build time**, because the official
+  PHP image lags Debian's security fixes. Omeka and PHP stay pinned.
+- **Releases are automated** from the commit types: git-cliff prepends to
+  `CHANGELOG.md`, the shared next-version action picks the version, and
+  `release.yml` tags and publishes. `cliff.toml` and `.githooks/commit-msg` are
+  synced from `scattercode/release-pipelines`; never edit them here.
+
 ## Conventions
 
 - British English throughout; sentence case for headings.

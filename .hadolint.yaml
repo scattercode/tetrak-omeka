@@ -1,0 +1,5 @@
+ignored:
+  # Pin versions in apt-get install. The base image tag already fixes the
+  # Debian release and so the package set; per-package pins break on every
+  # Debian point release, which would turn a stable build into a broken one.
+  - DL3008
