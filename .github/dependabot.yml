@@ -14,6 +14,10 @@ updates:
       github-actions:
         patterns: ["*"]
 
+  # PHP and MariaDB move only within their pinned line. A new PHP minor or a
+  # new MariaDB release line is a deliberate, tested upgrade -- the stack is
+  # meant to be stable, and MariaDB 11.4 is a long-term-support release -- so
+  # Dependabot proposes neither.
   - package-ecosystem: "docker"
     directory: "/omeka"
     schedule:
@@ -21,6 +25,9 @@ updates:
     commit-message:
       prefix: "build"
       include: "scope"
+    ignore:
+      - dependency-name: "php"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
   - package-ecosystem: "docker-compose"
     directory: "/"
@@ -33,3 +40,5 @@ updates:
       # Our own image, built locally from omeka/ and on no registry; looking it
       # up failed the whole job. The docker ecosystem above covers its base.
       - dependency-name: "tetrak/omeka-s"
+      - dependency-name: "mariadb"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
