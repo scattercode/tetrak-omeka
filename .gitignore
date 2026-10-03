@@ -1,0 +1,6 @@
+# Local credentials, copied from .env.example. Not secret, but local.
+.env
+
+.DS_Store
+__pycache__/
+.venv/

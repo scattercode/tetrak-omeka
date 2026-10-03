@@ -1,0 +1,48 @@
+# The stack must keep building and coming up: that is this repository's
+# promise of a stable Omeka. Builds the image from the pinned release, starts
+# the stack with the example credentials, and waits for Omeka to answer.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  stack:
+    name: Omeka stack comes up
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate compose.yaml
+        run: |
+          cp .env.example .env
+          docker compose config -q
+
+      - name: Build and start
+        run: docker compose up -d --build --wait
+
+      - name: Omeka answers with its installer
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsSL http://127.0.0.1:8080/ | grep -q "Omeka"; then
+              echo "Omeka is up"; exit 0
+            fi
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+
+      - name: Stop
+        if: always()
+        run: docker compose down -v
