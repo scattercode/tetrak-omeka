@@ -54,7 +54,11 @@ fi
 # Values for the closing message. The environment wins over .env, as it does
 # for Compose; .env is plain KEY=value lines.
 admin_email=${OMEKA_ADMIN_EMAIL:-$(sed -n 's/^OMEKA_ADMIN_EMAIL=//p' .env)}
-url=$(sed -n 's/^OMEKA_URL=//p' .omeka-api.env)
+key_file=.omeka-api.env
+if [ "$project" != "$(sed -n 's/^name: *//p' compose.yaml)" ]; then
+    key_file=".omeka-api.$project.env"
+fi
+url=$(sed -n 's/^OMEKA_URL=//p' "$key_file")
 
 echo
 echo "Omeka is ready at ${url}/admin"

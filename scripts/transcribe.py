@@ -115,6 +115,12 @@ def transcribe(image: Path, backend: str, tetrak_ocr: str) -> tuple[str, str, fl
     if result.returncode != 0:
         detail = "\n".join(result.stderr.strip().splitlines()[-5:])
         raise RuntimeError(f"tetrak-ocr failed:\n{detail}")
+    text = output.read_text(encoding="utf-8").strip()
+    if not text:
+        # A backend can succeed and recognise nothing. Writing that back
+        # would show an empty transcript as done, and with --redo would
+        # replace a real one, so the page counts as failed instead.
+        raise RuntimeError(f"tetrak-ocr read no text with {backend}; nothing written")
     engine, quality = backend, None
     for line in result.stderr.splitlines():
         # auto-local's verdict: "[auto-local → vision]  effective=0.21  quality=0.24"
@@ -123,7 +129,7 @@ def transcribe(image: Path, backend: str, tetrak_ocr: str) -> tuple[str, str, fl
             for field in line.split():
                 if field.startswith("quality="):
                     quality = float(field.removeprefix("quality="))
-    return output.read_text(encoding="utf-8").strip(), engine, quality
+    return text, engine, quality
 
 
 def main() -> int:
@@ -200,20 +206,21 @@ def main() -> int:
                 print(f" failed\n  {error}")
                 continue
 
-            # Omeka replaces every value when a request carries any, so fetch
-            # the page's full record, change the two properties, and send the
-            # whole record back.
-            record = omeka.get(f"media/{media['o:id']}")
             value = {"type": "literal", "property_id": transcript_id, "@value": text}
             if language:
                 value["@language"] = language
-            record["tetrak:transcript"] = [value]
             scored = f", quality {quality:.2f}" if quality is not None else ""
-            record["tetrak:transcribedWith"] = [{
-                "type": "literal", "property_id": with_id,
-                "@value": f"Tetrak {version}, {engine}{scored}, {today}",
-            }]
             try:
+                # Omeka replaces every value when a request carries any, so
+                # fetch the page's full record, change the two properties,
+                # and send the whole record back. Fetched now, not before the
+                # OCR, so nothing edited meanwhile is overwritten.
+                record = omeka.get(f"media/{media['o:id']}")
+                record["tetrak:transcript"] = [value]
+                record["tetrak:transcribedWith"] = [{
+                    "type": "literal", "property_id": with_id,
+                    "@value": f"Tetrak {version}, {engine}{scored}, {today}",
+                }]
                 omeka.put(f"media/{media['o:id']}", record)
             except OmekaError as error:
                 failures += 1

@@ -43,7 +43,7 @@ The steps it runs also work on their own:
 
 | Command | What it does |
 |---|---|
-| `scripts/install.sh` | Installs Omeka and its modules if they are not installed yet, and writes a fresh API key to `.omeka-api.env` |
+| `scripts/install.sh` | Installs Omeka and its modules if they are not installed yet, and writes a fresh API key to `.omeka-api.env` (`.omeka-api.<project>.env` for another Compose project) |
 | `python3 scripts/seed.py` | Loads whatever is missing from `collections/` through the REST API; safe to repeat |
 | `scripts/reset.sh --no-seed` | A clean, installed Omeka with nothing in it |
 
@@ -77,8 +77,10 @@ demo, give it another project name and port:
 COMPOSE_PROJECT_NAME=tetrak-omeka-scratch OMEKA_PORT=8081 scripts/reset.sh
 ```
 
-The scripts use whichever instance the variables point at, so set the same
-two for any command run against that copy.
+Each instance gets its own API key file, `.omeka-api.<project>.env` beside the
+main one's `.omeka-api.env`, and the scripts pick the file for whichever
+project `COMPOSE_PROJECT_NAME` names. So set the same variable for any command
+run against that copy, and leave it unset to go back to the main one.
 
 ## What the stack is
 

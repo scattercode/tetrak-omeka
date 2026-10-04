@@ -15,9 +15,11 @@ edited metadata, reset the instance (scripts/reset.sh). An interrupted run picks
 where it stopped.
 
 Prerequisites: Python 3.11 or later, standard library only; a running,
-installed Omeka; and an API key in .omeka-api.env, which scripts/install.sh
-writes. OMEKA_URL, OMEKA_KEY_IDENTITY and OMEKA_KEY_CREDENTIAL in the
-environment take precedence over that file.
+installed Omeka; and its API key, which scripts/install.sh writes to
+.omeka-api.env, or to .omeka-api.<project>.env for an instance run under
+another COMPOSE_PROJECT_NAME. The project is worked out as Compose does, so
+the key read is always the instance's own. OMEKA_URL, OMEKA_KEY_IDENTITY and
+OMEKA_KEY_CREDENTIAL in the environment take precedence over the file.
 
 Usage:
     python3 scripts/seed.py                        # every collection
@@ -29,6 +31,7 @@ from __future__ import annotations
 import json
 import mimetypes
 import os
+import re
 import sys
 import tomllib
 import urllib.error
@@ -39,7 +42,34 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COLLECTIONS = ROOT / "collections"
-KEY_FILE = ROOT / ".omeka-api.env"
+
+
+def compose_project() -> tuple[str, str]:
+    """The Compose project these scripts are pointed at, and the default.
+
+    The same precedence as Compose: COMPOSE_PROJECT_NAME in the environment,
+    then in .env, then compose.yaml's own name.
+    """
+    default = re.search(r"^name:\s*(\S+)", (ROOT / "compose.yaml").read_text(), re.M).group(1)
+    if os.environ.get("COMPOSE_PROJECT_NAME"):
+        return os.environ["COMPOSE_PROJECT_NAME"], default
+    env = ROOT / ".env"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            key, sep, value = line.partition("=")
+            if sep and key.strip() == "COMPOSE_PROJECT_NAME" and value.strip():
+                return value.strip(), default
+    return default, default
+
+
+def key_file() -> Path:
+    """Where scripts/install.sh wrote this instance's API key.
+
+    One file per Compose project, so installing a second copy alongside
+    never redirects the scripts away from the first.
+    """
+    project, default = compose_project()
+    return ROOT / (".omeka-api.env" if project == default else f".omeka-api.{project}.env")
 
 
 class OmekaError(Exception):
@@ -220,9 +250,15 @@ def seed_site(omeka: Omeka, spec: dict, item_set: dict):
     assigned to it.
     """
     found = omeka.get("sites", slug=spec["slug"])
-    if found:
+    if found and found[0].get("o:homepage"):
         print(f"Site {spec['slug']}: exists, left unchanged")
         return found[0]
+    if found:
+        # Created, but an interrupted run never gave it its home page.
+        site = found[0]
+        finish_site(omeka, spec, site)
+        print(f"Site {spec['slug']}: existed without a home page; finished")
+        return site
 
     site = omeka.post(
         "sites",
@@ -237,7 +273,19 @@ def seed_site(omeka: Omeka, spec: dict, item_set: dict):
             "o:site_item_set": [{"o:item_set": {"o:id": item_set["o:id"]}}],
         },
     )
-    home = omeka.post(
+    finish_site(omeka, spec, site)
+    print(f"Site {spec['slug']}: created")
+    return site
+
+
+def finish_site(omeka: Omeka, spec: dict, site: dict) -> None:
+    """Give a site its home page and navigation: the steps after creating it.
+
+    Separate so that a run interrupted between them can finish the job. A
+    home page left by such a run is reused rather than duplicated.
+    """
+    pages = omeka.get("site_pages", site_id=site["o:id"], per_page=1000)
+    home = next((page for page in pages if page["o:slug"] == "home"), None) or omeka.post(
         "site_pages",
         {
             "o:site": {"o:id": site["o:id"]},
@@ -272,8 +320,6 @@ def seed_site(omeka: Omeka, spec: dict, item_set: dict):
             ],
         },
     )
-    print(f"Site {spec['slug']}: created")
-    return site
 
 
 def seed_collection(omeka: Omeka, directory: Path) -> None:
@@ -336,8 +382,9 @@ def seed_collection(omeka: Omeka, directory: Path) -> None:
 
 def credentials() -> tuple[str, str, str]:
     settings = {}
-    if KEY_FILE.exists():
-        for line in KEY_FILE.read_text().splitlines():
+    path = key_file()
+    if path.exists():
+        for line in path.read_text().splitlines():
             key, sep, value = line.partition("=")
             if sep and not key.startswith("#"):
                 settings[key.strip()] = value.strip()
@@ -349,7 +396,10 @@ def credentials() -> tuple[str, str, str]:
             settings["OMEKA_KEY_CREDENTIAL"],
         )
     except KeyError as missing:
-        sys.exit(f"seed.py: {missing.args[0]} is not set -- run scripts/install.sh first")
+        sys.exit(
+            f"{Path(sys.argv[0]).name}: {missing.args[0]} is not set and there is no "
+            f"{path.name} for this instance -- run scripts/install.sh first"
+        )
 
 
 def main(names: list[str]) -> None:
