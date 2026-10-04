@@ -12,7 +12,7 @@ It sits beside, not inside, Tetrak:
 
 - **Tetrak** (public, [tetrak.dev](https://tetrak.dev/)) is the OCR pipeline.
   This repository uses it **only as an installed package**, pinned to a
-  release tag of `github.com/scattercode/tetrak`. Never import from or point
+  release on PyPI (`tetrak`). Never import from or point
   at a sibling checkout (`../tetrak`): the demo has to work for someone who
   clones only this repository.
 - **tetrak-easyocr-armenian** supplies the Armenian recogniser, through
@@ -37,6 +37,61 @@ way: anything the image needs goes in `omeka/`.
   local demo values, not secrets; `.env` is gitignored.
 - The Compose project is named `tetrak-omeka`, so its volumes are
   `tetrak-omeka_db-data` and `tetrak-omeka_omeka-files`.
+  `COMPOSE_PROJECT_NAME` and `OMEKA_PORT` run a second copy alongside; use
+  one for experiments rather than resetting somebody's demo instance.
+
+## Collections and seeding
+
+`scripts/reset.sh` is the clean starting point for demos and tutorials:
+`down -v`, rebuild, `scripts/install.sh`, `scripts/seed.py`. Write tutorials
+to begin from it.
+
+- **Only install, modules and the API key bypass the REST API.**
+  `omeka/setup.php` does those three, because the API cannot. Everything else, seeding included,
+  goes through the public API, since that is what the tutorials teach. Do not
+  add direct database or service calls for anything the API can do.
+- **`collections/<name>/collection.toml` is the record of what goes in.**
+  `collections/README.md` has the format. Identifiers are the match keys, so
+  never change one without a reset. The seeder adds what is missing and never
+  edits what exists: a metadata change reaches Omeka only through a reset.
+- **Every image needs a `SOURCES.md` entry before it is added**, as in
+  Tetrak's corpus. The ephemera are byte-identical copies of Tetrak corpus
+  fixtures; the Armenian pages are byte-identical to `tetrak-hy-trainer`'s
+  Wikisource harvests, with each page's revision pinned. Only the
+  encyclopedia pages are held out from the recogniser's training.
+- **The sites' reader is Octopus Viewer, placed by the `tetrak-reader`
+  theme.** Its right-hand panel is the selected page's `displayValues()`, so
+  anything written to a page's media appears beside the image. Pin the
+  module by version and SHA-256 in `omeka/Dockerfile`, as Omeka is. The theme
+  is built from Omeka's default theme by `omeka/build-theme.sh`, whose edits
+  fail the build if the default theme changes; never commit a copy of the
+  theme. Site settings are not in the API, so configure through the theme,
+  not the admin interface.
+- **Reference transcripts are `tetrak:referenceTranscript`; Tetrak's are
+  `tetrak:transcript`**, with `tetrak:transcribedWith` beside it. All three
+  are defined in `collections/vocabularies.toml`. Never write one over the
+  other: the demo is the comparison.
+- **The untranscribed items are the demo, not gaps.** Grauman's, the
+  playbill, *The Death of Kikos* and the medical encyclopedia have no
+  reference transcript on purpose, for `scripts/transcribe.py` to fill. Do
+  not add one, and keep `tutorials/transcribe-with-tetrak.md`, whose outputs
+  are real runs, in step with them.
+- **Writing a value back means fetching the whole record and PUTting it.**
+  Omeka treats any request carrying property values as the complete set, so
+  a PATCH of one property deletes the rest. `scripts/transcribe.py` shows the
+  pattern.
+- **Tetrak comes from PyPI as `tetrak`, pinned with `==`**; `tetrak-ocr` is
+  only the command. The pin is in the tutorial, `transcribe.py` (docstring
+  and `INSTALL`), the CI transcription step and README's install line. Move
+  them together, and re-run the tutorial's commands, since it quotes real
+  output.
+- **The Soviet Armenian Encyclopedia is CC BY-SA 3.0, not public domain.**
+  Anything published from it, transcripts included, needs attribution and the
+  same licence.
+- **Omeka 4.1.1 answers `DELETE` on items and media with HTTP 500, but the
+  delete succeeds.** It fails rendering the deleted resource afterwards. A
+  script that deletes should check for a 404 afterwards rather than trust the
+  status code.
 
 ## Checks and releases
 

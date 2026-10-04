@@ -11,6 +11,9 @@
 #
 # Usage:
 #   cp .env.example .env
+#   scripts/reset.sh               # clean stack, installed and seeded
+#
+# or by hand:
 #   docker compose up -d --build
 #   open http://localhost:8080     # installer runs on first visit
 #   docker compose down            # keeps data
@@ -52,11 +55,17 @@ services:
       OMEKA_DB_NAME: ${OMEKA_DB_NAME}
       OMEKA_DB_USER: ${OMEKA_DB_USER}
       OMEKA_DB_PASSWORD: ${OMEKA_DB_PASSWORD}
+      # Read only by omeka/setup.php, which scripts/install.sh runs to install
+      # Omeka without the web form. Unset, the web installer still works.
+      OMEKA_ADMIN_NAME: ${OMEKA_ADMIN_NAME:-}
+      OMEKA_ADMIN_EMAIL: ${OMEKA_ADMIN_EMAIL:-}
+      OMEKA_ADMIN_PASSWORD: ${OMEKA_ADMIN_PASSWORD:-}
     # Bound to localhost rather than published on every interface: this has a
     # first-run installer that sets the admin password, and it should not be
     # reachable from the network before somebody has been through it.
+    # OMEKA_PORT moves it off 8080, to run a second copy alongside.
     ports:
-      - "127.0.0.1:8080:80"
+      - "127.0.0.1:${OMEKA_PORT:-8080}:80"
     volumes:
       - omeka-files:/var/www/html/files
 
