@@ -47,6 +47,28 @@ RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/Allo
     && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
     && a2enconf servername
 
+# Octopus Viewer, the page viewer the sites use: each page's image beside its
+# metadata, transcript included. Pinned like Omeka, by version and checksum;
+# omeka/setup.php installs it in Omeka once Omeka itself is installed.
+ARG OCTOPUSVIEWER_VERSION=0.10.4
+ARG OCTOPUSVIEWER_SHA256=faecc5b37c36f1867c3ab29de3a875c6e2692841a6c32eee6d0e818e8776fb14
+RUN curl -fsSL -o /tmp/octopusviewer.zip \
+        "https://github.com/biblibre/omeka-s-module-OctopusViewer/releases/download/v${OCTOPUSVIEWER_VERSION}/OctopusViewer-${OCTOPUSVIEWER_VERSION}.zip" \
+    && echo "${OCTOPUSVIEWER_SHA256}  /tmp/octopusviewer.zip" | sha256sum -c - \
+    && unzip -q /tmp/octopusviewer.zip -d /var/www/html/modules \
+    && rm /tmp/octopusviewer.zip
+
+# The sites' theme: the default theme with the viewer on its item pages.
+COPY build-theme.sh theme/ /tmp/tetrak-reader/
+RUN sh /tmp/tetrak-reader/build-theme.sh /tmp/tetrak-reader \
+    && rm -rf /tmp/tetrak-reader
+
+COPY uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
+# Installs Omeka and issues an API key from the command line, for
+# scripts/install.sh. Outside the web root, so Apache never serves it.
+COPY setup.php /opt/tetrak-omeka/setup.php
+
 COPY docker-entrypoint.sh /usr/local/bin/omeka-entrypoint
 RUN chmod +x /usr/local/bin/omeka-entrypoint
 

@@ -1,0 +1,178 @@
+# The Los Angeles stage and its picture palaces: three items from Tetrak's
+# OCR evaluation corpus, copied from it byte for byte. Provenance and rights
+# are in SOURCES.md beside this file; the format is in ../README.md.
+
+[item_set]
+identifier = "los-angeles-ephemera"
+class = "dctype:Collection"
+
+[item_set.metadata]
+"dcterms:title" = "Los Angeles stage and screen ephemera"
+"dcterms:description" = """\
+Vaudeville posters, trade papers and postcards of Hollywood's picture \
+palaces, from about 1914 to 1945. Display type, ornament, dense \
+multi-column newsprint and small signage in photographs: the kind of \
+material that general-purpose OCR handles worst. All three items are in \
+Tetrak's evaluation corpus, with human-verified transcripts."""
+"dcterms:spatial" = "Los Angeles, California"
+"dcterms:temporal" = "c. 1914–1945"
+
+[site]
+slug = "los-angeles"
+title = "Los Angeles stage and screen"
+summary = "Posters, trade papers and postcards from Los Angeles's theatres and picture palaces, about 1914 to 1945, each shown beside a verified transcript."
+introduction = """\
+<p>Three pieces of Los Angeles stage and screen ephemera: a vaudeville \
+poster, the front page of a theatrical trade weekly, and a postcard of \
+Hollywood Boulevard. Display type, ornament, dense newsprint and small \
+signage in a photograph are what general-purpose OCR handles worst, which is \
+why all three are in Tetrak's evaluation corpus.</p>
+<p>Open an item to see the scan beside its reference transcript, checked \
+by hand against the original.</p>"""
+
+[[items]]
+identifier = "inside-facts-1930-cover"
+class = "bibo:Issue"
+
+[items.metadata]
+"dcterms:title" = "Inside Facts of Stage and Screen, vol. XI, no. 22: front page"
+"dcterms:date" = "1930-05-31"
+"dcterms:type" = "Trade newspaper"
+"dcterms:description" = """\
+Front page of a Los Angeles theatrical trade weekly, "the only theatrical \
+newspaper on the Pacific Coast". Headline: "Warners to blaze path of \
+television theatres". Dense multi-column newsprint around a portrait of the \
+comedienne Irene Noblette."""
+"dcterms:contributor" = "Jack Josephs (editor)"
+"dcterms:spatial" = "Los Angeles, California"
+"dcterms:source" = { uri = "https://archive.org/details/insidefacts1122-1930-05-31", label = "Internet Archive / Media History Digital Library" }
+"dcterms:rights" = "Public domain in the United States: published in 1930, copyright expired on 1 January 2026."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+
+[[items.media]]
+file = "inside-facts-1930-cover.jpg"
+alt_text = "Front page of Inside Facts of Stage and Screen for 31 May 1930: a large masthead, the headline 'Warners to blaze path of television theatres', and a portrait of Irene Noblette between columns of small newsprint."
+
+[items.media.metadata]
+"dcterms:title" = "Front page"
+"tetrak:referenceTranscript" = { text_file = "transcripts/inside-facts-1930-cover.txt" }
+"dcterms:source" = { uri = "https://github.com/scattercode/tetrak/blob/5.14.0/evaluation/ocr/corpus/expected/inside-facts-1930-cover.md", label = "Reference transcript: Tetrak's evaluation corpus, human-verified" }
+
+[[items]]
+identifier = "kar-mi-troupe-poster"
+class = "bibo:Image"
+
+[items.metadata]
+"dcterms:title" = "The great Victorina Troupe, originators and presenters of the most marvelous sword swallowing act on earth"
+"dcterms:date" = "c. 1914"
+"dcterms:type" = "Poster"
+"dcterms:medium" = "Chromolithograph"
+"dcterms:description" = """\
+Vaudeville poster for a sword-swallowing act, crowded with lettering of \
+many sizes. The title is the Library of Congress catalogue's, after the \
+performer Victorina named in the captions; the printed headline reads \
+"See the great Kar-Mi Troupe". The Library of Congress colour calibration bar and ruler are \
+left in frame. Downscaled from the 4104 × 5116 pixel source to 1123 × 1400 \
+for Tetrak's corpus."""
+"dcterms:alternative" = "See the great Kar-Mi Troupe"
+"dcterms:publisher" = "Donaldson Litho. Co., Newport, Kentucky"
+"dcterms:isPartOf" = "Library of Congress theatrical poster collection"
+"dcterms:source" = { uri = "https://commons.wikimedia.org/wiki/File:The_great_Victorina_Troupe_originators_and_presenters_of_the_most_marvelous_sword_swallowing_act_on_earth._LCCN2014636914.jpg", label = "Wikimedia Commons, from the Library of Congress (LCCN 2014636914)" }
+"dcterms:rights" = "Library of Congress: no known restrictions on publication. Published before 1929."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+
+[[items.media]]
+file = "kar-mi-troupe-poster.jpg"
+alt_text = "Red vaudeville poster headed 'See the great Kar-Mi Troupe', with vignettes of performers swallowing swords, a rifle and an electric light, framed by a grey scale and colour calibration chart."
+
+[items.media.metadata]
+"dcterms:title" = "Poster"
+"tetrak:referenceTranscript" = { text_file = "transcripts/kar-mi-troupe-poster.txt" }
+"dcterms:source" = { uri = "https://github.com/scattercode/tetrak/blob/5.14.0/evaluation/ocr/corpus/expected/kar-mi-troupe-poster.md", label = "Reference transcript: Tetrak's evaluation corpus, human-verified" }
+
+[[items]]
+identifier = "hollywood-boulevard-east"
+class = "bibo:Image"
+
+[items.metadata]
+"dcterms:title" = "Looking east on Hollywood Boulevard"
+"dcterms:date" = "c. 1930–1945"
+"dcterms:type" = "Postcard"
+"dcterms:medium" = "Linen postcard"
+"dcterms:publisher" = "Tichnor Brothers"
+"dcterms:description" = """\
+Bird's-eye view along the boulevard, with the roof of Grauman's Chinese \
+Theatre in the foreground and small, distant shop and theatre signage \
+rather than one dominant sign. Card number 62696, series T-375. Front of \
+the card only."""
+"dcterms:spatial" = "Hollywood Boulevard, Los Angeles, California"
+"dcterms:source" = { uri = "https://www.digitalcommonwealth.org/search/commonwealth:2n49tg34w", label = "Digital Commonwealth / Boston Public Library" }
+"dcterms:rights" = "Published without a copyright notice. The Boston Public Library states: no known copyright restrictions."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+
+[[items.media]]
+file = "hollywood-boulevard-east.jpg"
+alt_text = "Tinted linen postcard looking east along Hollywood Boulevard from above, with the pagoda roof of Grauman's Chinese Theatre in the foreground, a streetcar and cars on the road, and hills behind."
+
+[items.media.metadata]
+"dcterms:title" = "Front of the card"
+"tetrak:referenceTranscript" = { text_file = "transcripts/hollywood-boulevard-east.txt" }
+"dcterms:source" = { uri = "https://github.com/scattercode/tetrak/blob/5.14.0/evaluation/ocr/corpus/expected/hollywood-boulevard-east.md", label = "Reference transcript: Tetrak's evaluation corpus, human-verified" }
+
+# The two below have no reference transcript: they are the ones the demo
+# transcribes with Tetrak (tutorials/transcribe-with-tetrak.md).
+
+[[items]]
+identifier = "graumans-chinese-theatre"
+class = "bibo:Image"
+
+[items.metadata]
+"dcterms:title" = "The Chinese Theatre, Hollywood, California"
+"dcterms:date" = "c. 1937–1945"
+"dcterms:type" = "Postcard"
+"dcterms:medium" = "Linen postcard"
+"dcterms:publisher" = "Tichnor Brothers"
+"dcterms:description" = """\
+Grauman's Chinese Theatre from the street. The marquee at the right edge \
+advertises Sylvia Sidney in You Only Live Once, cut off by the frame; the \
+film opened here on 27 January 1937, which dates the photograph. Card \
+number 62694, series T-373. Front of the card only."""
+"dcterms:spatial" = "Grauman's Chinese Theatre, Hollywood Boulevard, Los Angeles, California"
+"dcterms:source" = { uri = "https://www.digitalcommonwealth.org/search/commonwealth:2n49tg32b", label = "Digital Commonwealth / Boston Public Library" }
+"dcterms:rights" = "Published without a copyright notice. The Boston Public Library states: no known copyright restrictions."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+
+[[items.media]]
+file = "graumans-chinese-theatre.jpg"
+alt_text = "Tinted linen postcard of Grauman's Chinese Theatre: pagoda roof, palms and arched entrances, with a marquee cut off at the right edge."
+
+[items.media.metadata]
+"dcterms:title" = "Front of the card"
+
+[[items]]
+identifier = "hollywood-music-box-playbill-1926"
+class = "bibo:Document"
+
+[items.metadata]
+"dcterms:title" = "Hollywood Music Box playbill: Ken-Geki, the Imperial Theatre company of Tokio"
+"dcterms:date" = "1926-06-18"
+"dcterms:type" = "Playbill"
+"dcterms:publisher" = "J. F. Huber, 1631 South Los Angeles St."
+"dcterms:description" = """\
+Programme for the week beginning 18 June 1926 at the Hollywood Music Box, \
+6126 Hollywood Boulevard: Mitsuru Toyama and Koharu Ohara of the Imperial \
+Theatre, Tokio, in Ken-Geki, sword plays and a dance fantasy, sponsored by \
+Joseph M. Schenck, Charles Chaplin, Sid Grauman, Samuel Goldwyn and Cecil \
+B. DeMille. A tall, narrow sheet of small type with dotted cast lists."""
+"dcterms:spatial" = "Hollywood Music Box, 6126 Hollywood Boulevard, Los Angeles, California"
+"dcterms:isPartOf" = "Workman and Temple Family Homestead Museum Collection, 1830–1930"
+"dcterms:source" = { uri = "https://digitallibrary.usc.edu/", label = "USC Digital Library" }
+"dcterms:rights" = "Public domain in the United States: published in 1926. The Homestead Museum states only that copyright has not been assigned to it."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+
+[[items.media]]
+file = "hollywood-music-box-playbill-1926.png"
+alt_text = "Narrow playbill headed Hollywood Music Box, announcing Ken-Geki with Mitsuru Toyama and Koharu Ohara, followed by the programme and cast lists."
+
+[items.media.metadata]
+"dcterms:title" = "Playbill"

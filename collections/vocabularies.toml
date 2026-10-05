@@ -1,0 +1,25 @@
+# Vocabulary terms the collections use beyond those Omeka ships with (Dublin
+# Core, DCMI Type, BIBO, FOAF). scripts/seed.py creates each vocabulary, by
+# prefix, before loading any collection. The namespace is a name, not a
+# document: nothing is served at it.
+
+[[vocabularies]]
+prefix = "tetrak"
+namespace_uri = "https://tetrak.dev/ns/omeka#"
+label = "Tetrak"
+comment = "Terms for the Tetrak and Omeka demo: transcripts of page images, and where they came from."
+
+[[vocabularies.properties]]
+local_name = "referenceTranscript"
+label = "Reference transcript"
+comment = "A verified transcription of the page, proofread on Wikisource or checked by hand, against which OCR output can be compared."
+
+[[vocabularies.properties]]
+local_name = "transcript"
+label = "Tetrak transcript"
+comment = "The page's text as Tetrak's OCR read it, written back by scripts/transcribe.py. Unverified: compare it with a reference transcript where there is one."
+
+[[vocabularies.properties]]
+local_name = "transcribedWith"
+label = "Transcribed with"
+comment = "The Tetrak release, backend and date that produced the Tetrak transcript."

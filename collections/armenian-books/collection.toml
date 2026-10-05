@@ -1,0 +1,356 @@
+# Armenian printed books: proofread pages from two volumes, scanned on
+# Wikimedia Commons and transcribed on Armenian Wikisource. A proofread
+# transcript exists for every page. Provenance and rights are in SOURCES.md
+# beside this file; the format is in ../README.md.
+#
+# Each item is a run of pages, each page one of its media, in reading order.
+# Pages are titled by their printed page number. The scan page, the page's
+# position in the DjVu scan and what Wikisource numbers by, is in each page's
+# source label; in the Tumanyan volume it is 6 more than the printed number.
+
+[item_set]
+identifier = "armenian-books"
+class = "dctype:Collection"
+
+[item_set.metadata]
+"dcterms:title" = "Armenian printed books"
+"dcterms:description" = """\
+Pages from two twentieth-century Armenian books: ten pages of the Soviet \
+Armenian Encyclopedia, set in three narrow columns of small type, and the \
+whole of Hovhannes Tumanyan's tale "Brave Nazar" from the 1994 academic \
+edition of his complete works. Every page has a proofread transcript on \
+Armenian Wikisource, so OCR of them can be scored."""
+"dcterms:language" = "hy"
+
+[site]
+slug = "armenian-books"
+title = "Armenian printed books"
+summary = "Pages from the Soviet Armenian Encyclopedia and the whole of Hovhannes Tumanyan's tale Brave Nazar, each shown beside its proofread Wikisource transcript."
+introduction = """\
+<p>Two Armenian books, read page by page: ten pages of the Soviet Armenian \
+Encyclopedia (1976), three narrow columns of small type to a page, and the \
+whole of Hovhannes Tumanyan's tale <em>Brave Nazar</em> (Քաջ Նազարը), as \
+printed in the 1994 academic edition of his complete works.</p>
+<p>Open an item and page through it: each scan sits beside its reference \
+transcript, proofread by volunteers on Armenian Wikisource. The encyclopedia \
+is © the Armenian Encyclopedia Publishing House under CC BY-SA 3.0; \
+Tumanyan's tale is in the public domain.</p>"""
+
+[[items]]
+identifier = "ase-vol2"
+class = "bibo:Book"
+
+[items.metadata]
+"dcterms:title" = { value = "Հայկական սովետական հանրագիտարան, հատոր 2", lang = "hy" }
+"dcterms:alternative" = { value = "Soviet Armenian Encyclopedia, volume 2", lang = "en" }
+"dcterms:contributor" = { value = "Վիկտոր Համբարձումյան (գլխավոր խմբագիր)", lang = "hy" }
+"dcterms:publisher" = { value = "Հայկական սովետական հանրագիտարանի գլխավոր խմբագրություն", lang = "hy" }
+"dcterms:date" = "1976"
+"dcterms:spatial" = "Yerevan"
+"dcterms:language" = "hy"
+"bibo:volume" = "2"
+"dcterms:extent" = "10 pages (105–114)"
+"dcterms:description" = """\
+Ten consecutive pages of the second volume, from the entries under ԱՐՇԱԿ \
+onwards: three columns of small type, dense with abbreviations, dates and \
+bibliographies. Edited by Viktor Ambartsumian. These pages are the held-out \
+evaluation set of Tetrak's Armenian recogniser."""
+"dcterms:rights" = "© Armenian Encyclopedia Publishing House, released under CC BY-SA 3.0 (the publisher's permission is recorded on Wikimedia Commons). Reuse requires attribution and the same licence."
+"dcterms:license" = { uri = "https://creativecommons.org/licenses/by-sa/3.0/", label = "CC BY-SA 3.0" }
+"dcterms:source" = [
+  { uri = "https://hy.wikisource.org/wiki/%D4%BB%D5%B6%D5%A4%D5%A5%D6%84%D5%BD:%D5%80%D5%A1%D5%B5%D5%AF%D5%A1%D5%AF%D5%A1%D5%B6_%D5%8D%D5%B8%D5%BE%D5%A5%D5%BF%D5%A1%D5%AF%D5%A1%D5%B6_%D5%80%D5%A1%D5%B6%D6%80%D5%A1%D5%A3%D5%AB%D5%BF%D5%A1%D6%80%D5%A1%D5%B6_(Soviet_Armenian_Encyclopedia)_2.djvu", label = "Armenian Wikisource: the transcription" },
+  { uri = "https://commons.wikimedia.org/wiki/File:%D5%80%D5%A1%D5%B5%D5%AF%D5%A1%D5%AF%D5%A1%D5%B6_%D5%8D%D5%B8%D5%BE%D5%A5%D5%BF%D5%A1%D5%AF%D5%A1%D5%B6_%D5%80%D5%A1%D5%B6%D6%80%D5%A1%D5%A3%D5%AB%D5%BF%D5%A1%D6%80%D5%A1%D5%B6_(Soviet_Armenian_Encyclopedia)_2.djvu", label = "Wikimedia Commons: the scan" },
+]
+
+[[items.media]]
+file = "ase-vol2/images/105.jpg"
+alt_text = "Page 105 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 105"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/105.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=348304", label = "Armenian Wikisource, scan page 105, proofread revision 348304" }
+
+[[items.media]]
+file = "ase-vol2/images/106.jpg"
+alt_text = "Page 106 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 106"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/106.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=164967", label = "Armenian Wikisource, scan page 106, proofread revision 164967" }
+
+[[items.media]]
+file = "ase-vol2/images/107.jpg"
+alt_text = "Page 107 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 107"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/107.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=164969", label = "Armenian Wikisource, scan page 107, proofread revision 164969" }
+
+[[items.media]]
+file = "ase-vol2/images/108.jpg"
+alt_text = "Page 108 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 108"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/108.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=165381", label = "Armenian Wikisource, scan page 108, proofread revision 165381" }
+
+[[items.media]]
+file = "ase-vol2/images/109.jpg"
+alt_text = "Page 109 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 109"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/109.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=165383", label = "Armenian Wikisource, scan page 109, proofread revision 165383" }
+
+[[items.media]]
+file = "ase-vol2/images/110.jpg"
+alt_text = "Page 110 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 110"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/110.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=165388", label = "Armenian Wikisource, scan page 110, proofread revision 165388" }
+
+[[items.media]]
+file = "ase-vol2/images/111.jpg"
+alt_text = "Page 111 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 111"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/111.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=164968", label = "Armenian Wikisource, scan page 111, proofread revision 164968" }
+
+[[items.media]]
+file = "ase-vol2/images/112.jpg"
+alt_text = "Page 112 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 112"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/112.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=164970", label = "Armenian Wikisource, scan page 112, proofread revision 164970" }
+
+[[items.media]]
+file = "ase-vol2/images/113.jpg"
+alt_text = "Page 113 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 113"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/113.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=165083", label = "Armenian Wikisource, scan page 113, proofread revision 165083" }
+
+[[items.media]]
+file = "ase-vol2/images/114.jpg"
+alt_text = "Page 114 of the Soviet Armenian Encyclopedia, volume 2: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 114"
+"tetrak:referenceTranscript" = { text_file = "ase-vol2/transcripts/114.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=165318", label = "Armenian Wikisource, scan page 114, proofread revision 165318" }
+
+[[items]]
+identifier = "tumanyan-brave-nazar"
+class = "bibo:Document"
+
+[items.metadata]
+"dcterms:title" = { value = "Քաջ Նազարը", lang = "hy" }
+"dcterms:alternative" = { value = "Brave Nazar", lang = "en" }
+"dcterms:creator" = [{ value = "Հովհաննես Թումանյան", lang = "hy" }, { value = "Hovhannes Tumanyan", lang = "en" }]
+"dcterms:created" = "1912"
+"dcterms:type" = "Tale"
+"dcterms:language" = "hy"
+"dcterms:isPartOf" = [{ value = "Երկերի լիակատար ժողովածու, հատոր 5 (1994)", lang = "hy" }, { value = "Complete works, volume 5 (1994)", lang = "en" }]
+"dcterms:extent" = "11 pages (scan pages 241–251, printed pages 235–245)"
+"dcterms:description" = """\
+Tumanyan's best-known tale, complete: the 1912 version of the story of \
+Nazar the coward, who swats a swarm of flies, reckons he has killed a \
+thousand, and is carried by other people's credulity and his own luck to \
+a throne. Set in a single column of italic Armenian type, with dialogue \
+and section numbers, as printed in the academic edition of his complete \
+works."""
+"dcterms:rights" = "Public domain: Tumanyan died in 1923. Marked PD-old on Wikimedia Commons."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+"dcterms:source" = [
+  { uri = "https://hy.wikisource.org/wiki/%D4%BB%D5%B6%D5%A4%D5%A5%D6%84%D5%BD:%D4%B9%D5%B8%D6%82%D5%B4%D5%A1%D5%B6%D5%B5%D5%A1%D5%B6%D5%AB_%D4%B5%D4%BC%D4%BA_%D5%B05.djvu", label = "Armenian Wikisource: the transcription" },
+  { uri = "https://commons.wikimedia.org/wiki/File:%D4%B9%D5%B8%D6%82%D5%B4%D5%A1%D5%B6%D5%B5%D5%A1%D5%B6%D5%AB_%D4%B5%D4%BC%D4%BA_%D5%B05.djvu", label = "Wikimedia Commons: the scan" },
+]
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/241.jpg"
+alt_text = "Printed page 235 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 235"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/241.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277571", label = "Armenian Wikisource, scan page 241, proofread revision 277571" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/242.jpg"
+alt_text = "Printed page 236 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 236"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/242.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277605", label = "Armenian Wikisource, scan page 242, proofread revision 277605" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/243.jpg"
+alt_text = "Printed page 237 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 237"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/243.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277606", label = "Armenian Wikisource, scan page 243, proofread revision 277606" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/244.jpg"
+alt_text = "Printed page 238 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 238"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/244.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277607", label = "Armenian Wikisource, scan page 244, proofread revision 277607" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/245.jpg"
+alt_text = "Printed page 239 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 239"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/245.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277759", label = "Armenian Wikisource, scan page 245, proofread revision 277759" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/246.jpg"
+alt_text = "Printed page 240 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 240"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/246.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277764", label = "Armenian Wikisource, scan page 246, proofread revision 277764" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/247.jpg"
+alt_text = "Printed page 241 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 241"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/247.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277768", label = "Armenian Wikisource, scan page 247, proofread revision 277768" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/248.jpg"
+alt_text = "Printed page 242 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 242"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/248.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277776", label = "Armenian Wikisource, scan page 248, proofread revision 277776" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/249.jpg"
+alt_text = "Printed page 243 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 243"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/249.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277777", label = "Armenian Wikisource, scan page 249, proofread revision 277777" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/250.jpg"
+alt_text = "Printed page 244 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 244"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/250.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277781", label = "Armenian Wikisource, scan page 250, proofread revision 277781" }
+
+[[items.media]]
+file = "tumanyan-brave-nazar/images/251.jpg"
+alt_text = "Printed page 245 of Tumanyan's tale Brave Nazar: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 245"
+"tetrak:referenceTranscript" = { text_file = "tumanyan-brave-nazar/transcripts/251.txt", lang = "hy" }
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277782", label = "Armenian Wikisource, scan page 251, proofread revision 277782" }
+
+# The two below have no reference transcript: they are the ones the demo
+# transcribes with Tetrak (tutorials/transcribe-with-tetrak.md).
+
+[[items]]
+identifier = "tumanyan-death-of-kikos"
+class = "bibo:Document"
+
+[items.metadata]
+"dcterms:title" = { value = "Կիկոսի մահը", lang = "hy" }
+"dcterms:alternative" = { value = "The Death of Kikos", lang = "en" }
+"dcterms:creator" = [{ value = "Հովհաննես Թումանյան", lang = "hy" }, { value = "Hovhannes Tumanyan", lang = "en" }]
+"dcterms:created" = "1913"
+"dcterms:type" = "Tale"
+"dcterms:language" = "hy"
+"dcterms:isPartOf" = [{ value = "Երկերի լիակատար ժողովածու, հատոր 5 (1994)", lang = "hy" }, { value = "Complete works, volume 5 (1994)", lang = "en" }]
+"dcterms:extent" = "4 pages (scan pages 252–255, printed pages 246–249)"
+"dcterms:description" = """\
+The 1913 tale, complete. A poor family's eldest daughter, sent for water, \
+imagines the son she might one day have, Kikos, climbing the tall tree by \
+the spring and falling to his death, and sits down to mourn him. Her two \
+sisters and then her mother follow and join in, until her father, the wisest \
+of them, takes them home to hold Kikos's wake and slaughters the family's only ox \
+for it. A single column of italic type with verse laments set into the \
+prose."""
+"dcterms:rights" = "Public domain: Tumanyan died in 1923. Marked PD-old on Wikimedia Commons."
+"dcterms:license" = { uri = "https://creativecommons.org/publicdomain/mark/1.0/", label = "Public Domain Mark 1.0" }
+"dcterms:source" = [
+  { uri = "https://hy.wikisource.org/wiki/%D4%BB%D5%B6%D5%A4%D5%A5%D6%84%D5%BD:%D4%B9%D5%B8%D6%82%D5%B4%D5%A1%D5%B6%D5%B5%D5%A1%D5%B6%D5%AB_%D4%B5%D4%BC%D4%BA_%D5%B05.djvu", label = "Armenian Wikisource: the transcription" },
+  { uri = "https://commons.wikimedia.org/wiki/File:%D4%B9%D5%B8%D6%82%D5%B4%D5%A1%D5%B6%D5%B5%D5%A1%D5%B6%D5%AB_%D4%B5%D4%BC%D4%BA_%D5%B05.djvu", label = "Wikimedia Commons: the scan" },
+]
+
+[[items.media]]
+file = "tumanyan-death-of-kikos/images/252.jpg"
+alt_text = "Printed page 246 of Tumanyan's tale The Death of Kikos: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 246"
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277783", label = "Armenian Wikisource, scan page 252, proofread revision 277783" }
+
+[[items.media]]
+file = "tumanyan-death-of-kikos/images/253.jpg"
+alt_text = "Printed page 247 of Tumanyan's tale The Death of Kikos: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 247"
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277785", label = "Armenian Wikisource, scan page 253, proofread revision 277785" }
+
+[[items.media]]
+file = "tumanyan-death-of-kikos/images/254.jpg"
+alt_text = "Printed page 248 of Tumanyan's tale The Death of Kikos: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 248"
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277786", label = "Armenian Wikisource, scan page 254, proofread revision 277786" }
+
+[[items.media]]
+file = "tumanyan-death-of-kikos/images/255.jpg"
+alt_text = "Printed page 249 of Tumanyan's tale The Death of Kikos: a single column of italic Armenian text."
+[items.media.metadata]
+"dcterms:title" = "Page 249"
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=277788", label = "Armenian Wikisource, scan page 255, proofread revision 277788" }
+
+[[items]]
+identifier = "medical-encyclopedia"
+class = "bibo:Book"
+
+[items.metadata]
+"dcterms:title" = { value = "Հանրամատչելի բժշկական հանրագիտարան", lang = "hy" }
+"dcterms:alternative" = { value = "Popular medical encyclopedia", lang = "en" }
+"dcterms:contributor" = { value = "Հ. Մ. Այվազյան (խմբագիր)", lang = "hy" }
+"dcterms:publisher" = { value = "Հայկական հանրագիտարանի հրատարակչություն", lang = "hy" }
+"dcterms:date" = "2001"
+"dcterms:spatial" = "Yerevan"
+"dcterms:language" = "hy"
+"dcterms:extent" = "2 pages (512 and 514)"
+"dcterms:description" = """\
+Two pages from the article on caring for young children: three columns of \
+small type to a page, with italic cross-references, abbreviations and \
+figures. They are in the held-out evaluation set of Tetrak's Armenian \
+recogniser, so it has never been trained on them."""
+"dcterms:rights" = "© Armenian Encyclopedia Publishing House, released under CC BY-SA 3.0 (the publisher's permission is recorded on Wikimedia Commons). Reuse requires attribution and the same licence."
+"dcterms:license" = { uri = "https://creativecommons.org/licenses/by-sa/3.0/", label = "CC BY-SA 3.0" }
+"dcterms:source" = [
+  { uri = "https://hy.wikisource.org/wiki/%D4%BB%D5%B6%D5%A4%D5%A5%D6%84%D5%BD:%D5%80%D5%A1%D5%B6%D6%80%D5%A1%D5%B4%D5%A1%D5%BF%D5%B9%D5%A5%D5%AC%D5%AB_%D5%A2%D5%AA%D5%B7%D5%AF%D5%A1%D5%AF%D5%A1%D5%B6_%D5%B0%D5%A1%D5%B6%D6%80%D5%A1%D5%A3%D5%AB%D5%BF%D5%A1%D6%80%D5%A1%D5%B6_(Popular_medical_encyclopedia).djvu", label = "Armenian Wikisource: the transcription" },
+  { uri = "https://commons.wikimedia.org/wiki/File:%D5%80%D5%A1%D5%B6%D6%80%D5%A1%D5%B4%D5%A1%D5%BF%D5%B9%D5%A5%D5%AC%D5%AB_%D5%A2%D5%AA%D5%B7%D5%AF%D5%A1%D5%AF%D5%A1%D5%B6_%D5%B0%D5%A1%D5%B6%D6%80%D5%A1%D5%A3%D5%AB%D5%BF%D5%A1%D6%80%D5%A1%D5%B6_(Popular_medical_encyclopedia).djvu", label = "Wikimedia Commons: the scan" },
+]
+
+[[items.media]]
+file = "medical-encyclopedia/images/512.jpg"
+alt_text = "Page 512 of the Popular medical encyclopedia: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 512"
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=155173", label = "Armenian Wikisource, scan page 512, proofread revision 155173" }
+
+[[items.media]]
+file = "medical-encyclopedia/images/514.jpg"
+alt_text = "Page 514 of the Popular medical encyclopedia: three columns of small Armenian type under a running head."
+[items.media.metadata]
+"dcterms:title" = "Page 514"
+"dcterms:source" = { uri = "https://hy.wikisource.org/w/index.php?oldid=155333", label = "Armenian Wikisource, scan page 514, proofread revision 155333" }

@@ -1,0 +1,9 @@
+
+/* Tetrak reader: the page viewer, appended to the default theme's stylesheet.
+   Taller than Octopus Viewer's default, so a page and its transcript can be
+   read side by side without scrolling the window. The module's stylesheet
+   loads after this one, so the selector needs the extra weight. */
+html octopusviewer-viewer {
+    height: 85vh;
+    min-height: 500px;
+}

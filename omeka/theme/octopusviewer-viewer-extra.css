@@ -1,0 +1,24 @@
+/* Tetrak reader: styles inside Octopus Viewer.
+   The right-hand panel holds the selected page's metadata, transcript
+   included. At the module's default 20% it is too narrow for a page of
+   prose, so it gets two fifths of the width. */
+.sidebar-right:not(.collapsed) {
+    flex-basis: 40%;
+}
+
+octopusviewer-media-info {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* A value's language tag, e.g. "hy" on an Armenian transcript. The default
+   theme draws it as a grey badge, but its stylesheet does not reach inside
+   the viewer, where it would otherwise read as the first word of the text.
+   Same badge, on a line of its own above the value. */
+.value .language {
+    display: table;
+    margin-bottom: 4px;
+    padding: 0 6px;
+    background-color: #d1d1d1;
+    font-size: 12px;
+}

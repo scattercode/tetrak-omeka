@@ -4,7 +4,8 @@
 #   Lint                          hadolint, shellcheck, actionlint, markdownlint,
 #                                 and the compose file -- the pre-commit hooks again
 #   Omeka stack comes up          this repository's promise of a stable Omeka:
-#                                 build from the pinned release, start, and answer
+#                                 build from the pinned release, start, answer,
+#                                 then install and seed it as scripts/reset.sh does
 #   Trivy scan                    HIGH/CRITICAL fixed vulnerabilities in the built
 #                                 image, and misconfiguration in Dockerfile and compose
 #   Shared templates are current  cliff.toml and .githooks/commit-msg match
@@ -37,7 +38,7 @@ jobs:
           dockerfile: omeka/Dockerfile
 
       - name: Shell scripts
-        run: shellcheck omeka/*.sh
+        run: shellcheck omeka/*.sh scripts/*.sh
 
       - name: Workflows
         run: |
@@ -74,6 +75,102 @@ jobs:
           done
           docker compose logs
           exit 1
+
+      - name: Install and seed
+        run: |
+          scripts/install.sh
+          python3 scripts/seed.py
+
+      - name: Every collection is in Omeka
+        run: |
+          set -a; . ./.omeka-api.env; set +a
+          python3 - <<'EOF'
+          import json, os, tomllib, urllib.request
+          from pathlib import Path
+
+          auth = (f"key_identity={os.environ['OMEKA_KEY_IDENTITY']}"
+                  f"&key_credential={os.environ['OMEKA_KEY_CREDENTIAL']}")
+
+          def count(resource):
+              url = f"{os.environ['OMEKA_URL']}/api/{resource}?per_page=1&{auth}"
+              with urllib.request.urlopen(url) as response:
+                  return int(response.headers["Omeka-S-Total-Results"])
+
+          manifests = [tomllib.loads(p.read_text())
+                       for p in Path("collections").glob("*/collection.toml")]
+          expected = {
+              "sites": sum(1 for m in manifests if "site" in m),
+              "item_sets": len(manifests),
+              "items": sum(len(m["items"]) for m in manifests),
+              "media": sum(len(i.get("media", [])) for m in manifests for i in m["items"]),
+          }
+          actual = {resource: count(resource) for resource in expected}
+          print(actual)
+          assert actual == expected, f"expected {expected}"
+          EOF
+
+      - name: Every site shows its items in the reader
+        run: |
+          set -a; . ./.omeka-api.env; set +a
+          python3 - <<'EOF'
+          import json, os, urllib.request
+
+          auth = (f"key_identity={os.environ['OMEKA_KEY_IDENTITY']}"
+                  f"&key_credential={os.environ['OMEKA_KEY_CREDENTIAL']}")
+          base = os.environ["OMEKA_URL"]
+
+          def get(url):
+              with urllib.request.urlopen(url) as response:
+                  return response.read().decode()
+
+          for site in json.loads(get(f"{base}/api/sites?{auth}")):
+              items = json.loads(get(f"{base}/api/items?site_id={site['o:id']}&per_page=1&{auth}"))
+              assert items, f"site {site['o:slug']} has no items"
+              page = get(f"{base}/s/{site['o:slug']}/item/{items[0]['o:id']}")
+              assert "<octopusviewer-viewer" in page, f"no viewer on {site['o:slug']}"
+              print(f"{site['o:slug']}: viewer on item {items[0]['o:id']}")
+          EOF
+
+      - name: Seeding again changes nothing
+        run: |
+          python3 scripts/seed.py | tee seed.log
+          ! grep -E "created|uploaded" seed.log
+
+      # Tetrak's core install and Tesseract only: the demo's own backends pull
+      # several gigabytes of models, and the write-back path is the same
+      # whichever engine reads the page. Keep the tag in step with the guide.
+      - name: Install Tetrak
+        run: |
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr
+          python3 -m venv /tmp/tetrak
+          /tmp/tetrak/bin/pip install 'tetrak==5.14.1'
+
+      - name: Transcribe a page and write it back
+        run: |
+          export PATH="/tmp/tetrak/bin:$PATH"
+          python3 scripts/transcribe.py --item graumans-chinese-theatre --backend tesseract-auto
+          set -a; . ./.omeka-api.env; set +a
+          python3 - <<'EOF'
+          import json, os, urllib.parse, urllib.request
+
+          query = urllib.parse.urlencode({
+              "property[0][property]": "dcterms:identifier",
+              "property[0][type]": "eq",
+              "property[0][text]": "graumans-chinese-theatre",
+              "key_identity": os.environ["OMEKA_KEY_IDENTITY"],
+              "key_credential": os.environ["OMEKA_KEY_CREDENTIAL"],
+          })
+          base = f"{os.environ['OMEKA_URL']}/api"
+          item = json.load(urllib.request.urlopen(f"{base}/items?{query}"))[0]
+          media = json.load(urllib.request.urlopen(item["o:media"][0]["@id"] + "?" + query))
+          assert media.get("tetrak:transcript"), "no Tetrak transcript written"
+          assert media.get("dcterms:title"), "the write-back lost the page's title"
+          print(media["tetrak:transcribedWith"][0]["@value"])
+          EOF
+
+      - name: Logs
+        if: failure()
+        run: docker compose logs
 
       - name: Stop
         if: always()
