@@ -34,21 +34,33 @@ python3 scripts/seed.py armenian-books    # one collection
 
 Seeding is safe to repeat: anything already in Omeka, matched on its
 identifier, is left alone, and only what is missing is added. Edits to a
-manifest therefore reach Omeka only through a reset. The one exception: an
-existing item is added to its collection's site if it is not on it already.
+manifest therefore reach Omeka only through a reset. Two exceptions, both
+additions rather than edits: an existing item is added to its collection's
+site if it is not on it already, and an existing vocabulary gains any
+properties added to `vocabularies.toml` since. An item's thumbnail is set
+only if it has none.
 
 ## The sites
 
 Each site uses the `tetrak-reader` theme, built into the image by
-`omeka/build-theme.sh`: Omeka's default theme with
+`omeka/build-theme.sh`: Omeka's default theme in tetrak.dev's design, with
 [Octopus Viewer](https://github.com/biblibre/omeka-s-module-OctopusViewer) on
 the item page. The viewer lists an item's pages on the left, shows the
-selected page in the middle, and that page's metadata on the right, its
-reference transcript included. Page through an item and the transcript
-follows.
+selected page in the middle, and that page's transcripts on the right.
+Page through an item and the transcripts follow.
 
-The viewer shows whatever properties a page has, so a transcript written
-back to a page by a script appears beside it with nothing else to configure.
+The right-hand panel is the theme's own
+(`omeka/theme/view/octopus-viewer/site/media/info.phtml`). It leads with the
+transcripts: where a page has both Tetrak's and a reference, Tetrak's score
+against the reference comes first, then the two transcripts behind a pair of
+tabs. The page's other properties follow, so anything else a script writes
+to a page still appears there with nothing to configure.
+
+Each home page is laid out by `scripts/seed.py` on Omeka's twelve-column
+grid: the introduction beside the featured page, then how the demo works,
+then a preview of the items. How the demo works is the same on every site,
+so it is one file, `home-steps.html`, beside this one. The home page is
+built once the items exist, since it features one of them.
 
 ## The manifest format
 
@@ -64,12 +76,18 @@ class = "dctype:Collection"           # optional resource class
 slug = "los-angeles"                  # the site is at /s/<slug>
 title = "Los Angeles stage and screen"
 summary = "…"                         # shown in lists of sites
-introduction = "<p>…</p>"             # home page HTML, above a preview of the items
+introduction = "<p>…</p>"             # home page HTML, the page's opening
 theme = "tetrak-reader"               # optional; this is the default
+
+[site.feature]                        # optional: one page shown large beside the introduction
+item = "kar-mi-troupe-poster"         # an item's identifier
+file = "kar-mi-troupe-poster.jpg"     # one of its media files, as below
+caption = "…"                         # optional
 
 [[items]]
 identifier = "kar-mi-troupe-poster"   # unique across all collections
 class = "bibo:Image"
+thumbnail = "kar-mi-troupe-poster.jpg"  # optional: the page shown in lists; else the first
 
 [items.metadata]
 "dcterms:title" = "The great Victorina Troupe …"
@@ -94,6 +112,8 @@ any collection is loaded:
 | `tetrak:referenceTranscript` | Reference transcript | A verified transcription of a page, to compare OCR with |
 | `tetrak:transcript` | Tetrak transcript | What Tetrak read, written back by `scripts/transcribe.py`; never set by the seeder |
 | `tetrak:transcribedWith` | Transcribed with | The Tetrak release, backend, quality score and date behind it |
+| `tetrak:characterSimilarity` | Character similarity | How closely Tetrak's transcript matches the reference, from 0 to 1, by Tetrak's own measure; only where there is a reference |
+| `tetrak:wordRecall` | Word recall | The fraction of the reference's words Tetrak's transcript contains, from 0 to 1; only where there is a reference |
 
 A value can take any of these forms:
 

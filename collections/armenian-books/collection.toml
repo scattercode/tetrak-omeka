@@ -15,30 +15,42 @@ class = "dctype:Collection"
 [item_set.metadata]
 "dcterms:title" = "Armenian printed books"
 "dcterms:description" = """\
-Pages from two twentieth-century Armenian books: ten pages of the Soviet \
-Armenian Encyclopedia, set in three narrow columns of small type, and the \
-whole of Hovhannes Tumanyan's tale "Brave Nazar" from the 1994 academic \
-edition of his complete works. Every page has a proofread transcript on \
-Armenian Wikisource, so OCR of them can be scored."""
+Pages from four Armenian printed works: ten pages of the Soviet Armenian \
+Encyclopedia and two of the Popular medical encyclopedia, set in three \
+narrow columns of small type, and two of Hovhannes Tumanyan's tales, "Brave \
+Nazar" and "The Death of Kikos", complete, from the 1994 academic edition \
+of his complete works. The Soviet Armenian Encyclopedia's pages and "Brave \
+Nazar" have proofread transcripts from Armenian Wikisource, so OCR of them \
+can be scored; the other two are left for Tetrak to read."""
 "dcterms:language" = "hy"
 
 [site]
 slug = "armenian-books"
 title = "Armenian printed books"
-summary = "Pages from the Soviet Armenian Encyclopedia and the whole of Hovhannes Tumanyan's tale Brave Nazar, each shown beside its proofread Wikisource transcript."
+summary = "Pages from two Armenian encyclopedias and two of Hovhannes Tumanyan's tales, shown beside proofread Wikisource transcripts and Tetrak's own."
 introduction = """\
-<p>Two Armenian books, read page by page: ten pages of the Soviet Armenian \
-Encyclopedia (1976), three narrow columns of small type to a page, and the \
-whole of Hovhannes Tumanyan's tale <em>Brave Nazar</em> (Քաջ Նազարը), as \
-printed in the 1994 academic edition of his complete works.</p>
-<p>Open an item and page through it: each scan sits beside its reference \
-transcript, proofread by volunteers on Armenian Wikisource. The encyclopedia \
-is © the Armenian Encyclopedia Publishing House under CC BY-SA 3.0; \
-Tumanyan's tale is in the public domain.</p>"""
+<p>Four Armenian printed works, read page by page: ten pages of the Soviet \
+Armenian Encyclopedia (1976) and two of the Popular medical encyclopedia \
+(2001), three narrow columns of small type to a page, and two of Hovhannes \
+Tumanyan's tales, <em>Brave Nazar</em> (Քաջ Նազարը) and <em>The Death of \
+Kikos</em> (Կիկոսի մահը), complete, as printed in the 1994 academic edition \
+of his works.</p>
+<p>The Soviet Armenian Encyclopedia and <em>Brave Nazar</em> have reference \
+transcripts, proofread by volunteers on Armenian Wikisource. The medical \
+encyclopedia and <em>The Death of Kikos</em> have none yet: they are for \
+Tetrak to read. Both encyclopedias are © the Armenian Encyclopedia \
+Publishing House under CC BY-SA 3.0; Tumanyan's tales are in the public \
+domain.</p>"""
+
+[site.feature]
+item = "ase-vol2"
+file = "ase-vol2/images/113.jpg"
+caption = "Page 113 of the Soviet Armenian Encyclopedia: three columns of small type around a botanical drawing. Tetrak's Armenian recogniser has never seen these pages; they are held out from its training."
 
 [[items]]
 identifier = "ase-vol2"
 class = "bibo:Book"
+thumbnail = "ase-vol2/images/113.jpg"
 
 [items.metadata]
 "dcterms:title" = { value = "Հայկական սովետական հանրագիտարան, հատոր 2", lang = "hy" }

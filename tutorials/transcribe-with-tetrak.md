@@ -249,14 +249,12 @@ and check that `which tetrak-ocr` points into that environment.
 
 ## 5. See the transcripts in Omeka
 
-Reload *The Death of Kikos*. Each page now has two new fields in the panel
-beside it:
-
-- **Tetrak transcript**: what Tetrak read.
-- **Transcribed with**: the Tetrak release, the engine, the quality score
-  where there is one, and the date, such as *Tetrak 5.14.1, auto-local →
-  vision, quality 0.24, 2026-10-04*. A transcript without its provenance is
-  hard to trust or to redo.
+Reload *The Death of Kikos*. The panel beside each page now leads with
+Tetrak's transcript, marked *Read by Tetrak · not checked*, and under that
+label, what produced it: the Tetrak release, the engine, the quality score
+where there is one, and the date, such as *Tetrak 5.14.1, auto-local →
+vision, quality 0.24, 2026-10-04*. A transcript without its provenance is
+hard to trust or to redo.
 
 Things worth showing:
 
@@ -285,15 +283,25 @@ python3 scripts/transcribe.py --item kar-mi-troupe-poster --include-reference
 
 ```text
 The great Victorina Troupe, originators and presenters of the most marvelous sword swallowing act on earth / Poster: auto-local ... 259 characters, via auto-local → vision, quality 0.22
+  against the reference: character similarity 0.286, word recall 0.464
 ```
 
-Open the Kar-Mi Troupe poster on the Los Angeles site. The panel now shows
-the reference transcript and Tetrak's one in the same panel. The poster's
-reference runs to over 1,200 characters; Tetrak recovered 259. It reads the
-big headlines, loses the small captions under the illustrations, and reads
-the Kodak colour bar photographed beside the poster as text.
-That is a fair picture of where OCR stands on decorative ephemera, and why
-the triage and the reference matter.
+With a reference to compare against, the script also scores Tetrak's
+transcript, with the two measures Tetrak's own benchmark uses: **character
+similarity**, how closely the two texts match character by character, and
+**word recall**, how many of the reference's words Tetrak found. Before
+comparing, both ignore case, treat any run of spaces and line breaks as a
+single space, and count the Armenian full stop `։` and abbreviation dot `․`
+as the colon and full stop they print like. Word boundaries still count.
+
+Open the Kar-Mi Troupe poster on the Los Angeles site. The panel now leads
+with the score, 28.6% of characters matching and 46.4% of words found, and
+puts the two transcripts behind a pair of tabs, *Tetrak* and *Reference*, to
+flip between. The poster's reference runs to over 1,200 characters; Tetrak
+recovered 259. It reads the big headlines, loses the small captions under
+the illustrations, and reads the Kodak colour bar photographed beside the
+poster as text. That is a fair picture of where OCR stands on decorative
+ephemera, and why the triage and the reference matter.
 
 The options, together:
 
@@ -314,20 +322,26 @@ For each page, `scripts/transcribe.py`:
    not a resized derivative.
 2. **Runs `tetrak-ocr ocr`** on it, exactly as in step 3, and reads the
    chosen engine and score from what `auto-local` prints.
-3. **Writes the transcript back** through Omeka's REST API, to two properties
+3. **Scores it against the reference**, if the page has one, by calling
+   `character_similarity` and `word_recall` from Tetrak's own
+   `tetrak_ocr.accuracy`, so the figures mean what they mean in Tetrak's
+   benchmark.
+4. **Writes the transcript back** through Omeka's REST API, to properties
    from the demo's own vocabulary: `tetrak:transcript` and
-   `tetrak:transcribedWith`.
+   `tetrak:transcribedWith`, and the scores to `tetrak:characterSimilarity`
+   and `tetrak:wordRecall`.
 
 The write-back has one catch worth knowing if you build on this. Omeka
 treats an update that carries any metadata as the complete set of values, so
 sending only the transcript would delete the page's title and source. The
-script therefore fetches the page's full record, changes the two properties,
-and sends the whole record back.
+script therefore fetches the page's full record, changes the properties it
+writes, and sends the whole record back.
 
 Tetrak's transcript goes in its own property, never over the reference
-transcript, so the two can always be compared. The reader shows whatever
-properties a page has, so nothing about the sites needed changing for the
-transcripts to appear.
+transcript, so the two can always be compared. The sites' theme gives the
+transcripts and scores their own layout in the panel, and lists any other
+property a page has below them, so a script that writes something else to a
+page needs nothing changed in the sites for it to appear.
 
 One difference from Tetrak's own batch mode: `tetrak-ocr batch` moves any
 page scoring below 0.10 to a triage folder instead of treating it as read.

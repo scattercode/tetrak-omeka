@@ -10,7 +10,8 @@ the public API, the same one the tutorials use.
 Safe to re-run. Vocabularies are matched on prefix, sites on slug, item sets
 and items on dcterms:identifier, and a media file on its file name within the
 item, so only what is missing is created. Records that already exist are left as they are, except that an
-item is added to its collection's site if it is missing from it: to apply
+item is added to its collection's site if it is missing from it, and a
+vocabulary gains any properties added to it since it was created: to apply
 edited metadata, reset the instance (scripts/reset.sh). An interrupted run picks up
 where it stopped.
 
@@ -42,6 +43,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 COLLECTIONS = ROOT / "collections"
+# How the demo works: the same on every site's home page.
+HOME_STEPS = COLLECTIONS / "home-steps.html"
 
 
 def compose_project() -> tuple[str, str]:
@@ -219,46 +222,59 @@ def seed_vocabularies(omeka: Omeka) -> None:
     collections use that Omeka does not ship with."""
     manifest = tomllib.loads((COLLECTIONS / "vocabularies.toml").read_text())
     for spec in manifest.get("vocabularies", []):
-        if omeka.get("vocabularies", prefix=spec["prefix"]):
+        properties = [
+            {
+                "o:local_name": prop["local_name"],
+                "o:label": prop["label"],
+                "o:comment": prop.get("comment", ""),
+            }
+            for prop in spec.get("properties", [])
+        ]
+        found = omeka.get("vocabularies", prefix=spec["prefix"])
+        if not found:
+            omeka.post(
+                "vocabularies",
+                {
+                    "o:prefix": spec["prefix"],
+                    "o:namespace_uri": spec["namespace_uri"],
+                    "o:label": spec["label"],
+                    "o:comment": spec.get("comment", ""),
+                    "o:property": properties,
+                },
+            )
+            print(f"Vocabulary {spec['prefix']}: created")
+            continue
+        # An existing vocabulary gets the properties added to the manifest
+        # since, so an instance seeded earlier can hold what the scripts now
+        # write. Omeka keeps the properties listed by id and creates the rest;
+        # any it is not sent, it deletes, so every existing one is listed.
+        vocabulary = found[0]
+        existing = omeka.get("properties", vocabulary_id=vocabulary["o:id"], per_page=1000)
+        names = {prop["o:local_name"] for prop in existing}
+        missing = [prop for prop in properties if prop["o:local_name"] not in names]
+        if not missing:
             print(f"Vocabulary {spec['prefix']}: exists, left unchanged")
             continue
-        omeka.post(
-            "vocabularies",
-            {
-                "o:prefix": spec["prefix"],
-                "o:namespace_uri": spec["namespace_uri"],
-                "o:label": spec["label"],
-                "o:comment": spec.get("comment", ""),
-                "o:property": [
-                    {
-                        "o:local_name": prop["local_name"],
-                        "o:label": prop["label"],
-                        "o:comment": prop.get("comment", ""),
-                    }
-                    for prop in spec.get("properties", [])
-                ],
-            },
+        omeka.patch(
+            f"vocabularies/{vocabulary['o:id']}",
+            {"o:property": [{"o:id": prop["o:id"]} for prop in existing] + missing},
         )
-        print(f"Vocabulary {spec['prefix']}: created")
+        added = ", ".join(prop["o:local_name"] for prop in missing)
+        print(f"Vocabulary {spec['prefix']}: added {added}")
 
 
 def seed_site(omeka: Omeka, spec: dict, item_set: dict):
-    """A public site showing one item set, with a home page introducing it.
+    """A public site showing one item set. Its home page comes later, from
+    finish_site(), once the items it features exist.
 
     Created with the item set in its pool, but items are assigned to it
     one by one as they are created, since Omeka 4 shows a site only the items
     assigned to it.
     """
     found = omeka.get("sites", slug=spec["slug"])
-    if found and found[0].get("o:homepage"):
-        print(f"Site {spec['slug']}: exists, left unchanged")
-        return found[0]
     if found:
-        # Created, but an interrupted run never gave it its home page.
-        site = found[0]
-        finish_site(omeka, spec, site)
-        print(f"Site {spec['slug']}: existed without a home page; finished")
-        return site
+        print(f"Site {spec['slug']}: exists")
+        return found[0]
 
     site = omeka.post(
         "sites",
@@ -273,13 +289,65 @@ def seed_site(omeka: Omeka, spec: dict, item_set: dict):
             "o:site_item_set": [{"o:item_set": {"o:id": item_set["o:id"]}}],
         },
     )
-    finish_site(omeka, spec, site)
     print(f"Site {spec['slug']}: created")
     return site
 
 
+def find_media(omeka: Omeka, item_identifier: str, file: str) -> tuple[dict, dict]:
+    """An item, by identifier, and its media uploaded from a manifest file."""
+    item = omeka.find_by_identifier("items", item_identifier)
+    if not item:
+        raise OmekaError(f"no item with the identifier {item_identifier}")
+    for media in omeka.get("media", item_id=item["o:id"], per_page=1000):
+        if media["o:source"] == Path(file).name:
+            return item, media
+    raise OmekaError(f"item {item_identifier} has no media from {file}")
+
+
+def span(columns: int) -> dict:
+    """A block's place in the home page's twelve-column grid."""
+    return {"grid_column_position": "auto", "grid_column_span": str(columns)}
+
+
+def home_blocks(omeka: Omeka, spec: dict) -> list[dict]:
+    """The home page: the introduction beside one page shown large, how the
+    demo works, then the items. Omeka's grid falls back to one column on a
+    narrow screen."""
+    feature = spec.get("feature")
+    blocks = [{"o:layout": "html", "o:data": {"html": spec["introduction"]},
+               "o:layout_data": span(7 if feature else 12)}]
+    if feature:
+        item, media = find_media(omeka, feature["item"], feature["file"])
+        blocks.append({
+            "o:layout": "media",
+            "o:data": {"layout": "", "media_display": "thumbnail",
+                       "thumbnail_type": "large", "show_title_option": "no_title"},
+            "o:attachment": [{"o:item": {"o:id": item["o:id"]},
+                              "o:media": {"o:id": media["o:id"]},
+                              "o:caption": feature.get("caption", "")}],
+            "o:layout_data": span(5),
+        })
+    blocks += [
+        {"o:layout": "html", "o:data": {"html": HOME_STEPS.read_text()},
+         "o:layout_data": span(12)},
+        {
+            "o:layout": "browsePreview",
+            "o:data": {
+                "resource_type": "items",
+                "query": "",
+                "heading": "In this collection",
+                "limit": 12,
+                "components": ["resource-heading", "resource-body", "thumbnail"],
+                "link-text": "Browse all",
+            },
+            "o:layout_data": span(12),
+        },
+    ]
+    return blocks
+
+
 def finish_site(omeka: Omeka, spec: dict, site: dict) -> None:
-    """Give a site its home page and navigation: the steps after creating it.
+    """Give a site its home page and navigation, once its items exist.
 
     Separate so that a run interrupted between them can finish the job. A
     home page left by such a run is reused rather than duplicated.
@@ -291,20 +359,10 @@ def finish_site(omeka: Omeka, spec: dict, site: dict) -> None:
             "o:site": {"o:id": site["o:id"]},
             "o:slug": "home",
             "o:title": spec["title"],
-            "o:block": [
-                {"o:layout": "html", "o:data": {"html": spec["introduction"]}},
-                {
-                    "o:layout": "browsePreview",
-                    "o:data": {
-                        "resource_type": "items",
-                        "query": "",
-                        "heading": "In this collection",
-                        "limit": 12,
-                        "components": ["resource-heading", "resource-body", "thumbnail"],
-                        "link-text": "Browse all",
-                    },
-                },
-            ],
+            "o:layout": "grid",
+            "o:layout_data": {"grid_columns": "12", "grid_column_gap": "56",
+                              "grid_row_gap": "56"},
+            "o:block": home_blocks(omeka, spec),
         },
     )
     # Every new site gets an example "Welcome" page; listing only the home
@@ -315,7 +373,10 @@ def finish_site(omeka: Omeka, spec: dict, site: dict) -> None:
             "o:page": [{"o:id": home["o:id"]}],
             "o:homepage": {"o:id": home["o:id"]},
             "o:navigation": [
-                {"type": "page", "data": {"label": "", "id": home["o:id"]}, "links": []},
+                # Labelled, since an empty label falls back to the page's
+                # title, which is the site's: the menu then repeated the name
+                # beside it.
+                {"type": "page", "data": {"label": "Introduction", "id": home["o:id"]}, "links": []},
                 {"type": "browse", "data": {"label": "Browse", "query": ""}, "links": []},
             ],
         },
@@ -378,6 +439,18 @@ def seed_collection(omeka: Omeka, directory: Path) -> None:
                 data["o:alt_text"] = media["alt_text"]
             omeka.post_with_file("media", data, file)
             print(f"    {media['file']}: uploaded")
+
+        # The item's thumbnail, where the manifest names a page more telling
+        # than its first. Set only where none is, like everything else here.
+        if "thumbnail" in spec and not item.get("o:primary_media"):
+            _, media = find_media(omeka, spec["identifier"], spec["thumbnail"])
+            omeka.patch(f"items/{item['o:id']}", {"o:primary_media": {"o:id": media["o:id"]}})
+            print(f"    {spec['thumbnail']}: the item's thumbnail")
+
+    # The home page features an item, so it comes once the items exist.
+    if site and not site.get("o:homepage"):
+        finish_site(omeka, manifest["site"], site)
+        print(f"Site {site['o:slug']}: home page created")
 
 
 def credentials() -> tuple[str, str, str]:

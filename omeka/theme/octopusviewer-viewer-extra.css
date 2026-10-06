@@ -1,7 +1,50 @@
 /* Tetrak reader: styles inside Octopus Viewer.
-   The right-hand panel holds the selected page's metadata, transcript
-   included. At the module's default 20% it is too narrow for a page of
-   prose, so it gets two fifths of the width. */
+
+   The viewer is a shadow root, so the theme's stylesheet does not reach in;
+   its custom properties do, so the colours and fonts here are reader.css's
+   tokens. */
+.octopusviewer-viewer {
+    --octopusviewer-border-color: var(--rule);
+    --octopusviewer-controls-background-color: var(--paper-2);
+    --octopusviewer-font-size: 15px;
+    --octopusviewer-thumbnail-size: 56px;
+
+    background-color: var(--paper);
+    color: var(--ink);
+}
+
+/* The scan sits on a slightly deeper paper than the panels either side. */
+.octopusviewer-media-view {
+    background-color: var(--paper-2);
+}
+
+.collapse-toggle:hover,
+.octopusviewer-media-selector-element:hover {
+    background-color: var(--paper-2);
+}
+
+/* The page list: narrower than the module's 20%, since it holds only a
+   thumbnail and a page number. The selected page is marked in clay. */
+.sidebar-left:not(.collapsed) {
+    flex-basis: 13%;
+}
+
+.octopusviewer-media-selector-element .octopusviewer-title {
+    color: var(--ink-soft);
+}
+
+.octopusviewer-media-selector-element.octopusviewer-selected {
+    background-color: var(--paper-2);
+    box-shadow: inset 3px 0 0 var(--clay-deep);
+}
+
+.octopusviewer-media-selector-element.octopusviewer-selected .octopusviewer-title {
+    color: var(--ink);
+}
+
+/* The right-hand panel holds the selected page's transcripts. At the
+   module's default 20% it is too narrow for a page of prose, so it gets two
+   fifths of the width. */
 .sidebar-right:not(.collapsed) {
     flex-basis: 40%;
 }
@@ -21,4 +64,180 @@ octopusviewer-media-info {
     padding: 0 6px;
     background-color: #d1d1d1;
     font-size: 12px;
+}
+
+/* The panel's own layout, from view/octopus-viewer/site/media/info.phtml:
+   Tetrak's score against the reference, the transcripts behind a pair of
+   tabs, then the page's other values. Clay, the one accent, here always
+   means Tetrak's reading. */
+.tr-panel {
+    padding: 4px 8px 16px;
+    color: var(--ink);
+}
+
+.tr-title {
+    margin: 0 0 16px;
+    font-family: var(--font-display);
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.tr-kicker {
+    margin: 0 0 8px;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* The score: two large figures, each with a meter under it. */
+.tr-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 20px;
+    margin-bottom: 20px;
+    padding: 12px 16px 16px;
+    border-left: 3px solid var(--clay);
+    background: var(--paper-2);
+}
+
+.tr-scores .tr-kicker {
+    grid-column: 1 / -1;
+}
+
+.tr-score__figure {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.tr-score__label {
+    display: block;
+    color: var(--ink-soft);
+    font-size: 13px;
+}
+
+.tr-score__meter {
+    display: block;
+    height: 4px;
+    margin-top: 8px;
+    background: var(--paper-3);
+}
+
+.tr-score__meter > span {
+    display: block;
+    height: 100%;
+    background: var(--clay);
+}
+
+/* The tabs: radio buttons, hidden but still focusable, drawn as their
+   labels. A page with one transcript has no tabs. */
+.tr-tabs {
+    display: flex;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+}
+
+.tr-tabs input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tr-tabs label {
+    margin-bottom: -1px;
+    padding: 8px 14px;
+    border-bottom: 3px solid transparent;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.tr-tabs label:hover {
+    color: var(--ink);
+}
+
+.tr-tabs input:checked + label {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.tr-tabs #tr-tab-tetrak:checked + label {
+    border-bottom-color: var(--clay-deep);
+}
+
+.tr-tabs #tr-tab-reference:checked + label {
+    border-bottom-color: var(--ink-soft);
+}
+
+.tr-tabs input:focus-visible + label {
+    outline: 2px solid var(--clay-deep);
+    outline-offset: 2px;
+}
+
+.tr-transcripts--tabbed .tr-transcript {
+    display: none;
+}
+
+.tr-transcripts--tabbed:has(#tr-tab-tetrak:checked) .tr-transcript--tetrak,
+.tr-transcripts--tabbed:has(#tr-tab-reference:checked) .tr-transcript--reference {
+    display: block;
+}
+
+/* The transcripts. Clay marks Tetrak's reading, ink the reference. */
+.tr-transcript--tetrak .tr-kicker {
+    color: var(--clay-deep);
+}
+
+.tr-provenance {
+    margin: -4px 0 12px;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.tr-text {
+    padding-left: 14px;
+    border-left: 2px solid var(--rule);
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.tr-transcript--tetrak .tr-text {
+    border-left-color: var(--clay);
+}
+
+.tr-details {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-size: 13px;
+}
+
+/* On a narrow screen, three columns leave none of them readable: the scan
+   goes above and the panel below, and the page list gives way to the
+   previous and next buttons under the scan. */
+@media screen and (max-width: 799px) {
+    .octopusviewer-body {
+        flex-direction: column;
+    }
+
+    .sidebar-left {
+        display: none;
+    }
+
+    .sidebar-right:not(.collapsed) {
+        flex-basis: 55%;
+        border-top: 1px solid var(--rule);
+        border-left: 0;
+    }
 }
