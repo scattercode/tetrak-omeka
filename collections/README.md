@@ -40,7 +40,7 @@ existing item is added to its collection's site if it is not on it already.
 ## The sites
 
 Each site uses the `tetrak-reader` theme, built into the image by
-`omeka/build-theme.sh`: Omeka's default theme with
+`omeka/build-theme.sh`: Omeka's default theme in tetrak.dev's design, with
 [Octopus Viewer](https://github.com/biblibre/omeka-s-module-OctopusViewer) on
 the item page. The viewer lists an item's pages on the left, shows the
 selected page in the middle, and that page's transcripts on the right.

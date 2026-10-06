@@ -61,7 +61,8 @@ the middle, and that page's transcripts on the right, with Tetrak's score
 against the reference where there is one.
 It is pinned in `omeka/Dockerfile` like Omeka itself, and placed by the
 `tetrak-reader` theme, which `omeka/build-theme.sh` derives from Omeka's
-default theme at build time.
+default theme at build time and dresses in tetrak.dev's design: its palette,
+and its fonts, self-hosted so the demo works offline.
 
 Without the scripts, Omeka still works the usual way: `docker compose up -d
 --build`, and the first visit runs the web installer.

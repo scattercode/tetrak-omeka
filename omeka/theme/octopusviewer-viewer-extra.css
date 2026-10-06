@@ -1,7 +1,50 @@
 /* Tetrak reader: styles inside Octopus Viewer.
-   The right-hand panel holds the selected page's metadata, transcript
-   included. At the module's default 20% it is too narrow for a page of
-   prose, so it gets two fifths of the width. */
+
+   The viewer is a shadow root, so the theme's stylesheet does not reach in;
+   its custom properties do, so the colours and fonts here are reader.css's
+   tokens. */
+.octopusviewer-viewer {
+    --octopusviewer-border-color: var(--rule);
+    --octopusviewer-controls-background-color: var(--paper-2);
+    --octopusviewer-font-size: 15px;
+    --octopusviewer-thumbnail-size: 56px;
+
+    background-color: var(--paper);
+    color: var(--ink);
+}
+
+/* The scan sits on a slightly deeper paper than the panels either side. */
+.octopusviewer-media-view {
+    background-color: var(--paper-2);
+}
+
+.collapse-toggle:hover,
+.octopusviewer-media-selector-element:hover {
+    background-color: var(--paper-2);
+}
+
+/* The page list: narrower than the module's 20%, since it holds only a
+   thumbnail and a page number. The selected page is marked in clay. */
+.sidebar-left:not(.collapsed) {
+    flex-basis: 13%;
+}
+
+.octopusviewer-media-selector-element .octopusviewer-title {
+    color: var(--ink-soft);
+}
+
+.octopusviewer-media-selector-element.octopusviewer-selected {
+    background-color: var(--paper-2);
+    box-shadow: inset 3px 0 0 var(--clay);
+}
+
+.octopusviewer-media-selector-element.octopusviewer-selected .octopusviewer-title {
+    color: var(--ink);
+}
+
+/* The right-hand panel holds the selected page's transcripts. At the
+   module's default 20% it is too narrow for a page of prose, so it gets two
+   fifths of the width. */
 .sidebar-right:not(.collapsed) {
     flex-basis: 40%;
 }
@@ -25,34 +68,24 @@ octopusviewer-media-info {
 
 /* The panel's own layout, from view/octopus-viewer/site/media/info.phtml:
    Tetrak's score against the reference, the transcripts behind a pair of
-   tabs, then the page's other values. The colours are Tetrak's, from the
-   tetrak.dev design tokens: warm paper, brown-black ink, and clay as the one
-   accent, which here always means Tetrak's reading. */
+   tabs, then the page's other values. Clay, the one accent, here always
+   means Tetrak's reading. */
 .tr-panel {
-    --paper: #f7f3ec;
-    --paper-2: #efe9df;
-    --paper-3: #e2dacd;
-    --ink: #1e1c19;
-    --ink-soft: #6d675e;
-    --rule: #d8d0c2;
-    --clay: #b08d4f;
-    --clay-deep: #8a6a33;
-    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-
     padding: 4px 8px 16px;
     color: var(--ink);
 }
 
 .tr-title {
     margin: 0 0 16px;
-    font-size: 22px;
+    font-family: var(--font-display);
+    font-size: 24px;
     line-height: 1.2;
 }
 
 .tr-kicker {
     margin: 0 0 8px;
     color: var(--ink-soft);
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -75,6 +108,7 @@ octopusviewer-media-info {
 
 .tr-score__figure {
     display: block;
+    font-family: var(--font-display);
     font-size: 30px;
     font-weight: 700;
     line-height: 1.1;
@@ -119,7 +153,7 @@ octopusviewer-media-info {
     padding: 8px 14px;
     border-bottom: 3px solid transparent;
     color: var(--ink-soft);
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -165,7 +199,7 @@ octopusviewer-media-info {
 .tr-provenance {
     margin: -4px 0 12px;
     color: var(--ink-soft);
-    font-family: var(--mono);
+    font-family: var(--font-mono);
     font-size: 12px;
 }
 
@@ -187,4 +221,23 @@ octopusviewer-media-info {
     border-top: 1px solid var(--rule);
     color: var(--ink-soft);
     font-size: 13px;
+}
+
+/* On a narrow screen, three columns leave none of them readable: the scan
+   goes above and the panel below, and the page list gives way to the
+   previous and next buttons under the scan. */
+@media screen and (max-width: 799px) {
+    .octopusviewer-body {
+        flex-direction: column;
+    }
+
+    .sidebar-left {
+        display: none;
+    }
+
+    .sidebar-right:not(.collapsed) {
+        flex-basis: 55%;
+        border-top: 1px solid var(--rule);
+        border-left: 0;
+    }
 }

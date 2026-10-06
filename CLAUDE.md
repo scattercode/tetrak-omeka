@@ -70,7 +70,19 @@ to begin from it.
   is built from Omeka's default theme by `omeka/build-theme.sh`, whose edits
   fail the build if the default theme changes; never commit a copy of the
   theme. Site settings are not in the API, so configure through the theme,
-  not the admin interface.
+  not the admin interface; that includes theme settings, whose defaults in
+  `theme.ini` never reach a site the seeder creates, which is why the build
+  edits the layout's fallback footer too.
+- **The theme wears tetrak.dev's design**, from Tetrak's
+  `tetrak-ocr-design` skill and `site/assets/scss/_tokens.scss`: paper, ink
+  and clay as the one accent; Playfair Display, Source Serif 4 and IBM Plex
+  Mono; hairline rules, no boxes. The tokens are in `omeka/theme/reader.css`
+  and inherit into the viewer's shadow root, so
+  `octopusviewer-viewer-extra.css` uses them rather than copying them. Fonts
+  are vendored in `omeka/theme/fonts/` with their licence and provenance in
+  `OFL.txt`; never link a font CDN, since the demo has to work offline.
+  Tetrak's faces are latin subsets, so Armenian falls through to Noto Serif
+  Armenian in every font stack.
 - **Reference transcripts are `tetrak:referenceTranscript`; Tetrak's are
   `tetrak:transcript`**, with `tetrak:transcribedWith` beside it, and
   `tetrak:characterSimilarity` and `tetrak:wordRecall` where the page has a

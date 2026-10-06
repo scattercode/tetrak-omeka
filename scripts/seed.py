@@ -334,7 +334,10 @@ def finish_site(omeka: Omeka, spec: dict, site: dict) -> None:
             "o:page": [{"o:id": home["o:id"]}],
             "o:homepage": {"o:id": home["o:id"]},
             "o:navigation": [
-                {"type": "page", "data": {"label": "", "id": home["o:id"]}, "links": []},
+                # Labelled, since an empty label falls back to the page's
+                # title, which is the site's: the menu then repeated the name
+                # beside it.
+                {"type": "page", "data": {"label": "Introduction", "id": home["o:id"]}, "links": []},
                 {"type": "browse", "data": {"label": "Browse", "query": ""}, "links": []},
             ],
         },

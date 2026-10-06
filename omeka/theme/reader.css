@@ -1,9 +1,510 @@
+/* Tetrak reader, appended to the default theme's stylesheet.
 
-/* Tetrak reader: the page viewer, appended to the default theme's stylesheet.
-   Taller than Octopus Viewer's default, so a page and its transcript can be
-   read side by side without scrolling the window. The module's stylesheet
-   loads after this one, so the selector needs the extra weight. */
+   Dresses Omeka's default theme in tetrak.dev's design, so the demo reads as
+   part of Tetrak rather than as a stock Omeka install: warm paper, brown-black
+   ink, clay as the one accent, Playfair Display over Source Serif 4, and IBM
+   Plex Mono for the small labels ("kickers") above things. Hierarchy comes
+   from type and space; the only marks are hairline rules. The values are
+   tetrak.dev's tokens (site/assets/scss/_tokens.scss in the Tetrak
+   repository), unchanged.
+
+   Light only: the default theme has no dark mode to follow, and the scans are
+   paper. Appended after the default theme's rules, so a selector here wins
+   at equal weight; a few carry extra weight to beat the theme's inline
+   <style> block, which comes later still. */
+
+@font-face {
+    font-family: "Playfair Display";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../fonts/playfair-display-700.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Source Serif 4";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/source-serif-4-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Source Serif 4";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("../fonts/source-serif-4-600.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Source Serif 4";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/source-serif-4-400-italic.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "IBM Plex Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/ibm-plex-mono-400.woff2") format("woff2");
+}
+
+/* The other faces are their latin subsets only, so Armenian text falls
+   through to this, glyph by glyph, wherever it appears. */
+@font-face {
+    font-family: "Noto Serif Armenian";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/noto-serif-armenian-400.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Noto Serif Armenian";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("../fonts/noto-serif-armenian-700.woff2") format("woff2");
+}
+
+/* Custom properties inherit into the page viewer's shadow root, so
+   octopusviewer-viewer-extra.css uses these too. */
+:root {
+    --paper: #f7f3ec;
+    --paper-2: #efe9df;
+    --paper-3: #e2dacd;
+    --ink: #1e1c19;
+    --ink-soft: #6d675e;
+    --rule: #d8d0c2;
+    --clay: #b08d4f;
+    --clay-deep: #8a6a33;
+
+    --font-display: "Playfair Display", "Noto Serif Armenian", Georgia, serif;
+    --font-body: "Source Serif 4", "Noto Serif Armenian", Georgia, serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --measure: 62ch;
+    --page-max: 1500px;
+}
+
+/* ----- Base ----- */
+
+body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+input,
+textarea,
+button,
+.button,
+select {
+    font-family: var(--font-body);
+    font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+body a:link,
+body a:visited {
+    color: var(--clay-deep);
+}
+
+body a:hover,
+body a:active {
+    color: var(--ink);
+    opacity: 1;
+}
+
+input[type="text"],
+select {
+    border: 1px solid var(--rule);
+    background-color: #fff;
+    color: var(--ink);
+}
+
+button,
+a.button,
+[type="submit"] {
+    border-radius: 0;
+    background-color: var(--paper-3);
+    color: var(--ink);
+}
+
+/* ----- Masthead ----- */
+
+header {
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--rule);
+    background-color: var(--paper);
+}
+
+h1.site-title {
+    font-size: 26px;
+    line-height: 1.2;
+}
+
+h1.site-title a:link,
+h1.site-title a:visited {
+    color: var(--ink);
+}
+
+/* The kicker: whose demo this is, above the collection's name. */
+h1.site-title::before {
+    content: "Tetrak · Omeka demo";
+    display: block;
+    margin-bottom: 4px;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+header nav ul a:link,
+header nav ul a:visited {
+    color: var(--ink-soft);
+}
+
+header nav ul .active > a:link,
+header nav ul .active > a:visited,
+header nav ul a:hover {
+    color: var(--ink);
+}
+
+#search {
+    border-color: var(--rule);
+    background-color: var(--paper);
+}
+
+#search form button[type="submit"] {
+    border: 1px solid var(--rule);
+    border-left: 0;
+    background-color: var(--paper-2);
+    color: var(--ink-soft);
+}
+
+/* On a narrow screen, the default theme hangs the search box below the bar,
+   over the page. Here it sits in the bar, under the name, and the menu's
+   toggle beside the name. */
+@media screen and (max-width: 799px) {
+    header {
+        display: flex;
+        flex-direction: column;
+        padding: 14px 0 12px;
+    }
+
+    /* The default theme centres each part of the bar with auto margins,
+       which in a column also shrinks it to its content, and would take the
+       menu's toggle, placed at the menu's right edge, into the middle. */
+    header > * {
+        align-self: stretch;
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    /* Clear of the menu's toggle, at the right of the name. */
+    h1.site-title {
+        padding-right: 84px;
+    }
+
+    header nav {
+        order: 1;
+    }
+
+    header nav ul a {
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+
+    #search {
+        position: static;
+        order: 2;
+        padding: 12px 30px 0;
+        border: 0;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    /* One row: name on the left, then the menu and the search box. The
+       default theme stacks them and floats the search box below the bar. */
+    header {
+        display: flex;
+        align-items: flex-end;
+        gap: 32px;
+        max-width: none;
+        padding: 20px 60px 0;
+    }
+
+    header > *,
+    h1.site-title,
+    header nav {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1.site-title {
+        margin: 0 auto 16px 0;
+    }
+
+    /* The default theme centres the menu with an !important margin, which
+       only another can undo. The search box follows the menu, at the right. */
+    header nav {
+        order: 1;
+        margin: 0 !important;
+    }
+
+    #search {
+        order: 2;
+    }
+
+    header nav ul.navigation {
+        margin: 0;
+        gap: 28px;
+    }
+
+    header nav ul.navigation > li:not(:last-child) {
+        margin-right: 0;
+    }
+
+    header nav > ul > li > a {
+        display: block;
+        margin: 0;
+        padding-bottom: 14px;
+        border-bottom: 2px solid transparent;
+    }
+
+    header nav > ul > li.active > a {
+        border-bottom-color: var(--clay);
+    }
+
+    #search {
+        position: static;
+        width: 260px;
+        padding: 0 0 14px;
+        border: 0;
+    }
+
+    #search form input[type="text"] {
+        font-size: 15px;
+    }
+}
+
+/* ----- Page ----- */
+
+#content,
+footer {
+    max-width: var(--page-max);
+}
+
+footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+}
+
+/* The home page's introduction is the standfirst: a prose measure, the
+   opening paragraph set larger. */
+.block-html {
+    max-width: var(--measure);
+}
+
+.block-html > p:first-child {
+    font-size: 22px;
+    line-height: 1.5;
+}
+
+.block-html h2,
+.preview-block h2 {
+    margin-top: 56px;
+    font-size: 28px;
+}
+
+/* ----- Lists of items: the home page's preview and the browse page ----- */
+
+/* A row: the first page as a thumbnail, then the title and the description.
+   The link becomes "contents" so its image and title can sit in the row's
+   grid directly; it still links both. */
+ul.resource-list .resource {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 6px 28px;
+    margin: 0;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+ul.resource-list .resource:first-child,
+ul.preview.resource-list li:first-of-type {
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+}
+
+ul.resource-list .resource .resource-link {
+    display: contents;
+}
+
+ul.resource-list .resource img,
+ul.resource-list .resource img ~ * {
+    width: auto;
+}
+
+ul.resource-list .resource img {
+    grid-row: 1 / span 2;
+    float: none;
+    width: 96px;
+    margin: 0;
+    border: 1px solid var(--rule);
+    background-color: #fff;
+}
+
+ul.resource-list .resource .resource-name {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+ul.resource-list .resource .resource-link:link .resource-name,
+ul.resource-list .resource .resource-link:visited .resource-name {
+    color: var(--ink);
+}
+
+ul.resource-list .resource .resource-link:hover .resource-name {
+    color: var(--clay-deep);
+}
+
+/* Three lines and an ellipsis, in place of the default theme's fade, whose
+   gradient is drawn in its own grey. The clamp gives up on a description
+   holding more than one block, so the height stops it at three lines too. */
+ul.resource-list .resource .description,
+.body-truncate-fade ul.resource-list .resource .description {
+    display: -webkit-box;
+    max-width: var(--measure);
+    max-height: calc(3 * 1.6em);
+    overflow: hidden;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.body-truncate-fade ul.resource-list .resource .description::after {
+    display: none;
+}
+
+/* "Browse all", after the home page's preview: a link, not a grey button. */
+body .resource-list.preview + a {
+    margin-top: 24px;
+    padding: 0;
+    background: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+body .resource-list.preview + a:link,
+body .resource-list.preview + a:visited {
+    color: var(--clay-deep);
+}
+
+body .resource-list.preview + a:hover {
+    background: none;
+    color: var(--ink);
+}
+
+body .resource-list.preview + a::after {
+    content: " →";
+}
+
+/* ----- An item's page ----- */
+
+/* The item's title, with its resource type moved above it as a kicker. */
+body.item.show #content {
+    display: flex;
+    flex-direction: column;
+}
+
+body.item.show #content > h2:first-of-type {
+    margin: 0 0 20px;
+    font-size: 34px;
+    line-height: 1.15;
+}
+
+body.resource #content > h2:first-of-type + h3 {
+    order: -1;
+    margin: 0 0 6px;
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+}
+
+/* The page viewer: as tall as the window allows under the masthead and the
+   title, so a page and its transcript are read without scrolling the page.
+   The module's stylesheet loads after this one, so the selector needs the
+   extra weight. */
 html octopusviewer-viewer {
-    height: 85vh;
-    min-height: 500px;
+    height: calc(100vh - 250px);
+    min-height: 480px;
+    border: 1px solid var(--rule);
+}
+
+/* The item's own metadata, under the viewer: label over value, in columns. */
+body.item.show #content > dl:not(.item-sets) {
+    columns: 3 260px;
+    column-gap: 48px;
+    margin: 40px 0 0;
+}
+
+body.item.show #content > dl .property {
+    margin-bottom: 24px;
+    break-inside: avoid;
+}
+
+.property dt {
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.property .value .language {
+    border-radius: 0;
+    background-color: var(--paper-3);
+    color: var(--ink-soft);
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+body.item.show #content > dl.item-sets {
+    margin: 8px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
 }
