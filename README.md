@@ -57,7 +57,8 @@ sites and their manifest format.
 The sites' item pages use
 [Octopus Viewer](https://github.com/biblibre/omeka-s-module-OctopusViewer), a
 lightweight page viewer: the item's pages down the left, the selected page in
-the middle, and that page's metadata on the right, its transcript included.
+the middle, and that page's transcripts on the right, with Tetrak's score
+against the reference where there is one.
 It is pinned in `omeka/Dockerfile` like Omeka itself, and placed by the
 `tetrak-reader` theme, which `omeka/build-theme.sh` derives from Omeka's
 default theme at build time.

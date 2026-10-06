@@ -10,7 +10,8 @@ the public API, the same one the tutorials use.
 Safe to re-run. Vocabularies are matched on prefix, sites on slug, item sets
 and items on dcterms:identifier, and a media file on its file name within the
 item, so only what is missing is created. Records that already exist are left as they are, except that an
-item is added to its collection's site if it is missing from it: to apply
+item is added to its collection's site if it is missing from it, and a
+vocabulary gains any properties added to it since it was created: to apply
 edited metadata, reset the instance (scripts/reset.sh). An interrupted run picks up
 where it stopped.
 
@@ -219,27 +220,45 @@ def seed_vocabularies(omeka: Omeka) -> None:
     collections use that Omeka does not ship with."""
     manifest = tomllib.loads((COLLECTIONS / "vocabularies.toml").read_text())
     for spec in manifest.get("vocabularies", []):
-        if omeka.get("vocabularies", prefix=spec["prefix"]):
+        properties = [
+            {
+                "o:local_name": prop["local_name"],
+                "o:label": prop["label"],
+                "o:comment": prop.get("comment", ""),
+            }
+            for prop in spec.get("properties", [])
+        ]
+        found = omeka.get("vocabularies", prefix=spec["prefix"])
+        if not found:
+            omeka.post(
+                "vocabularies",
+                {
+                    "o:prefix": spec["prefix"],
+                    "o:namespace_uri": spec["namespace_uri"],
+                    "o:label": spec["label"],
+                    "o:comment": spec.get("comment", ""),
+                    "o:property": properties,
+                },
+            )
+            print(f"Vocabulary {spec['prefix']}: created")
+            continue
+        # An existing vocabulary gets the properties added to the manifest
+        # since, so an instance seeded earlier can hold what the scripts now
+        # write. Omeka keeps the properties listed by id and creates the rest;
+        # any it is not sent, it deletes, so every existing one is listed.
+        vocabulary = found[0]
+        existing = omeka.get("properties", vocabulary_id=vocabulary["o:id"], per_page=1000)
+        names = {prop["o:local_name"] for prop in existing}
+        missing = [prop for prop in properties if prop["o:local_name"] not in names]
+        if not missing:
             print(f"Vocabulary {spec['prefix']}: exists, left unchanged")
             continue
-        omeka.post(
-            "vocabularies",
-            {
-                "o:prefix": spec["prefix"],
-                "o:namespace_uri": spec["namespace_uri"],
-                "o:label": spec["label"],
-                "o:comment": spec.get("comment", ""),
-                "o:property": [
-                    {
-                        "o:local_name": prop["local_name"],
-                        "o:label": prop["label"],
-                        "o:comment": prop.get("comment", ""),
-                    }
-                    for prop in spec.get("properties", [])
-                ],
-            },
+        omeka.patch(
+            f"vocabularies/{vocabulary['o:id']}",
+            {"o:property": [{"o:id": prop["o:id"]} for prop in existing] + missing},
         )
-        print(f"Vocabulary {spec['prefix']}: created")
+        added = ", ".join(prop["o:local_name"] for prop in missing)
+        print(f"Vocabulary {spec['prefix']}: added {added}")
 
 
 def seed_site(omeka: Omeka, spec: dict, item_set: dict):

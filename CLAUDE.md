@@ -60,17 +60,24 @@ to begin from it.
   Wikisource harvests, with each page's revision pinned. Only the
   encyclopedia pages are held out from the recogniser's training.
 - **The sites' reader is Octopus Viewer, placed by the `tetrak-reader`
-  theme.** Its right-hand panel is the selected page's `displayValues()`, so
-  anything written to a page's media appears beside the image. Pin the
+  theme.** Its right-hand panel is the theme's
+  `view/octopus-viewer/site/media/info.phtml`: the transcripts and their
+  scores laid out, then the page's other values as `displayValues()` would
+  list them, so anything else written to a page's media still appears beside
+  the image. The viewer cancels every click that is not on a link, so
+  anything interactive in the panel needs `omeka/theme/reader.js`. Pin the
   module by version and SHA-256 in `omeka/Dockerfile`, as Omeka is. The theme
   is built from Omeka's default theme by `omeka/build-theme.sh`, whose edits
   fail the build if the default theme changes; never commit a copy of the
   theme. Site settings are not in the API, so configure through the theme,
   not the admin interface.
 - **Reference transcripts are `tetrak:referenceTranscript`; Tetrak's are
-  `tetrak:transcript`**, with `tetrak:transcribedWith` beside it. All three
-  are defined in `collections/vocabularies.toml`. Never write one over the
-  other: the demo is the comparison.
+  `tetrak:transcript`**, with `tetrak:transcribedWith` beside it, and
+  `tetrak:characterSimilarity` and `tetrak:wordRecall` where the page has a
+  reference. All are defined in `collections/vocabularies.toml`; the scores
+  come from Tetrak's own `tetrak_ocr.accuracy`, so they mean what Tetrak's
+  benchmark means. Never write one transcript over the other: the demo is
+  the comparison.
 - **The untranscribed items are the demo, not gaps.** Grauman's, the
   playbill, *The Death of Kikos* and the medical encyclopedia have no
   reference transcript on purpose, for `scripts/transcribe.py` to fill. Do

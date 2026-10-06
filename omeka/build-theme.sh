@@ -8,7 +8,7 @@
 # changes underneath it.
 #
 # Usage (inside the image build only):
-#   build-theme.sh <directory holding reader.css and octopusviewer-viewer-extra.css>
+#   build-theme.sh <directory holding reader.css, reader.js, octopusviewer-viewer-extra.css and view/>
 set -eu
 
 source_dir=$1
@@ -27,12 +27,12 @@ replace() {
 
 replace 'name = "Default"' 'name = "Tetrak reader"'
 # Omeka puts the theme's version on its asset URLs (?v=...) so browsers fetch
-# a stylesheet again when it changes. Our CSS changes without the default
-# theme's version moving, so stamp the version with a hash of it: otherwise a
-# browser keeps the old styles until someone thinks to hard-refresh.
+# a stylesheet or script again when it changes. Ours change without the
+# default theme's version moving, so stamp the version with a hash of them:
+# otherwise a browser keeps the old ones until someone thinks to hard-refresh.
 default_version=$(sed -n 's/^version = "\(.*\)"$/\1/p' "$ini")
-css_hash=$(cat "$source_dir/reader.css" "$source_dir/octopusviewer-viewer-extra.css" | sha256sum | cut -c1-8)
-replace "version = \"$default_version\"" "version = \"$default_version-$css_hash\""
+asset_hash=$(cat "$source_dir/reader.css" "$source_dir/octopusviewer-viewer-extra.css" "$source_dir/reader.js" | sha256sum | cut -c1-8)
+replace "version = \"$default_version\"" "version = \"$default_version-$asset_hash\""
 replace ';description = ""' 'description = "Omeka'"'"'s default theme, with Octopus Viewer showing each page beside its transcript"'
 # The viewer replaces both the embeds above the metadata and the media list
 # below it: it is a media list in its own right.
@@ -41,6 +41,11 @@ replace 'resource_page_blocks.items.main[] = "mediaList"' ''
 
 # Outside the viewer: the theme's own stylesheet, so append to it.
 cat "$source_dir/reader.css" >> "$theme/asset/css/style.css"
+# Likewise the theme's script, which every page loads.
+cat "$source_dir/reader.js" >> "$theme/asset/js/default.js"
 # Inside the viewer, which is a web component with its own styles: Octopus
 # Viewer loads this file from the theme in place of its own empty one.
 cp "$source_dir/octopusviewer-viewer-extra.css" "$theme/asset/css/"
+# The viewer's right-hand panel. A theme's view/ comes before a module's when
+# Omeka looks for a template, so this replaces the module's own.
+cp -r "$source_dir/view" "$theme/"

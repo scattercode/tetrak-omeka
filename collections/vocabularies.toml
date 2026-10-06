@@ -23,3 +23,13 @@ comment = "The page's text as Tetrak's OCR read it, written back by scripts/tran
 local_name = "transcribedWith"
 label = "Transcribed with"
 comment = "The Tetrak release, backend and date that produced the Tetrak transcript."
+
+[[vocabularies.properties]]
+local_name = "characterSimilarity"
+label = "Character similarity"
+comment = "How closely the Tetrak transcript matches the reference transcript, character by character, from 0 to 1, as Tetrak's own evaluation scores it. Written by scripts/transcribe.py when the page has a reference."
+
+[[vocabularies.properties]]
+local_name = "wordRecall"
+label = "Word recall"
+comment = "The fraction of the reference transcript's words that the Tetrak transcript also contains, from 0 to 1, as Tetrak's own evaluation scores it. Written by scripts/transcribe.py when the page has a reference."

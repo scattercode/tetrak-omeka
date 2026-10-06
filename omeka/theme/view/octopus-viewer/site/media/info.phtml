@@ -1,0 +1,104 @@
+<?php
+/**
+ * Tetrak reader: the page viewer's right-hand panel, for the selected page.
+ *
+ * Overrides Octopus Viewer's site/media/info.phtml, which is the page's
+ * displayValues(): every property in turn, alike. Here the transcripts lead,
+ * since the demo is the comparison: Tetrak's score against the reference
+ * where both exist, then the transcripts themselves, one at a time behind a
+ * pair of tabs, then the page's other values as before.
+ *
+ * The panel is fetched and inserted with innerHTML, so it can run no script:
+ * the tabs are radio buttons, and octopusviewer-viewer-extra.css draws them.
+ *
+ * @var Omeka\Api\Representation\MediaRepresentation $media
+ */
+$escape = $this->plugin('escapeHtml');
+
+$text = function (string $term) use ($media): ?string {
+    $value = $media->value($term);
+    return $value ? (string) $value->value() : null;
+};
+$lang = function (string $term) use ($media, $escape): string {
+    $value = $media->value($term);
+    return $value && $value->lang() ? ' lang="' . $escape($value->lang()) . '"' : '';
+};
+
+$tetrak = $text('tetrak:transcript');
+$reference = $text('tetrak:referenceTranscript');
+$scores = array_filter([
+    'characters match' => $text('tetrak:characterSimilarity'),
+    'of words found' => $text('tetrak:wordRecall'),
+], fn ($score) => $score !== null);
+
+// Everything the panel does not lay out itself, in Omeka's usual list.
+$shown = ['dcterms:title', 'tetrak:transcript', 'tetrak:referenceTranscript',
+    'tetrak:transcribedWith', 'tetrak:characterSimilarity', 'tetrak:wordRecall'];
+$rest = array_diff_key($media->values(), array_flip($shown));
+
+$transcripts = [];
+if ($tetrak !== null) {
+    $transcripts['tetrak'] = [
+        'tab' => 'Tetrak',
+        'kicker' => 'Read by Tetrak · not checked',
+        'provenance' => $text('tetrak:transcribedWith'),
+        'text' => $tetrak,
+        'lang' => $lang('tetrak:transcript'),
+    ];
+}
+if ($reference !== null) {
+    $transcripts['reference'] = [
+        'tab' => 'Reference',
+        'kicker' => 'Reference · checked by people',
+        'provenance' => null,
+        'text' => $reference,
+        'lang' => $lang('tetrak:referenceTranscript'),
+    ];
+}
+$tabbed = count($transcripts) > 1;
+?>
+<div class="tr-panel">
+    <h2 class="tr-title"><?= $escape($media->displayTitle()) ?></h2>
+
+    <?php if ($scores): ?>
+    <div class="tr-scores">
+        <p class="tr-kicker">Tetrak against the reference</p>
+        <?php foreach ($scores as $label => $score): ?>
+        <?php $percent = 100 * (float) $score; ?>
+        <div class="tr-score">
+            <span class="tr-score__figure"><?= number_format($percent, 1) ?>%</span>
+            <span class="tr-score__label"><?= $escape($label) ?></span>
+            <span class="tr-score__meter" aria-hidden="true"><span style="width: <?= number_format($percent, 1, '.', '') ?>%"></span></span>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($transcripts): ?>
+    <div class="tr-transcripts<?= $tabbed ? ' tr-transcripts--tabbed' : '' ?>">
+        <?php if ($tabbed): ?>
+        <div class="tr-tabs" role="radiogroup" aria-label="Transcript">
+            <?php foreach (array_keys($transcripts) as $i => $key): ?>
+            <input type="radio" name="tr-tab" id="tr-tab-<?= $key ?>" value="<?= $key ?>"<?= $i === 0 ? ' checked' : '' ?>>
+            <label for="tr-tab-<?= $key ?>"><?= $escape($transcripts[$key]['tab']) ?></label>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        <?php foreach ($transcripts as $key => $transcript): ?>
+        <section class="tr-transcript tr-transcript--<?= $key ?>">
+            <p class="tr-kicker"><?= $escape($transcript['kicker']) ?></p>
+            <?php if ($transcript['provenance']): ?>
+            <p class="tr-provenance"><?= $escape($transcript['provenance']) ?></p>
+            <?php endif; ?>
+            <div class="tr-text"<?= $transcript['lang'] ?>><?= $escape($transcript['text']) ?></div>
+        </section>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($rest): ?>
+    <div class="tr-details">
+        <?= $this->partial('common/resource-values', ['values' => $rest, 'resource' => $media]) ?>
+    </div>
+    <?php endif; ?>
+</div>

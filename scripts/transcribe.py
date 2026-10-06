@@ -4,8 +4,11 @@
 For each page (each media) that has no transcript yet, this downloads the
 image from Omeka, runs the Tetrak CLI on it, and saves the result to the page
 as its "Tetrak transcript" (tetrak:transcript), with "Transcribed with"
-recording the Tetrak release, backend and date. The sites' reader shows both
-beside the image. tutorials/transcribe-with-tetrak.md walks through it.
+recording the Tetrak release, backend and date. Where the page has a
+reference transcript, it also scores Tetrak's against it, with Tetrak's own
+measures: "Character similarity" (tetrak:characterSimilarity) and "Word
+recall" (tetrak:wordRecall). The sites' reader shows the transcripts and the
+scores beside the image. tutorials/transcribe-with-tetrak.md walks through it.
 
 Which pages: by default, every page with neither a Tetrak transcript nor a
 reference transcript, so the pages that already show a verified transcript
@@ -40,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import json
 import shutil
 import subprocess
 import sys
@@ -63,13 +67,19 @@ def first_value(resource: dict, term: str) -> str | None:
     return values[0].get("@value") if values else None
 
 
+def tetrak_python(tetrak_ocr: str) -> str:
+    """The Python of the environment tetrak-ocr was installed into, for what
+    the CLI does not offer."""
+    return str(Path(tetrak_ocr).resolve().parent / "python")
+
+
 def tetrak_version(tetrak_ocr: str) -> str:
     """The installed Tetrak release. The CLI has no --version, so ask the
     Python environment it was installed into."""
-    python = Path(tetrak_ocr).resolve().parent / "python"
     try:
         out = subprocess.run(
-            [str(python), "-c", "import importlib.metadata as m; print(m.version('tetrak'))"],
+            [tetrak_python(tetrak_ocr), "-c",
+             "import importlib.metadata as m; print(m.version('tetrak'))"],
             capture_output=True, text=True, check=True,
         )
         return out.stdout.strip()
@@ -101,6 +111,31 @@ def select_items(omeka: Omeka, args) -> list[dict]:
             raise OmekaError(f"no collection with the identifier {args.collection}")
         query["item_set_id"] = item_set["o:id"]
     return omeka.get("items", **query)
+
+
+# Tetrak's evaluation measures, run in its own environment so that a score
+# here means what the same score means in Tetrak's benchmark: both normalise
+# case, whitespace and Armenian punctuation homoglyphs before comparing.
+SCORE = """
+import json, sys
+from tetrak_ocr.accuracy import character_similarity, word_recall
+actual, expected = json.load(sys.stdin)
+print(json.dumps([character_similarity(actual, expected), word_recall(actual, expected)]))
+"""
+
+
+def score(text: str, reference: str, tetrak_ocr: str) -> tuple[float, float]:
+    """Character similarity and word recall of a transcript against the
+    page's reference transcript, each from 0 to 1."""
+    out = subprocess.run(
+        [tetrak_python(tetrak_ocr), "-c", SCORE],
+        input=json.dumps([text, reference]), capture_output=True, text=True,
+    )
+    if out.returncode != 0:
+        detail = "\n".join(out.stderr.strip().splitlines()[-3:])
+        raise RuntimeError(f"scoring against the reference failed:\n{detail}")
+    similarity, recall = json.loads(out.stdout)
+    return similarity, recall
 
 
 def transcribe(image: Path, backend: str, tetrak_ocr: str) -> tuple[str, str, float | None]:
@@ -157,6 +192,8 @@ def main() -> int:
     try:
         transcript_id = omeka.term_id("properties", "tetrak:transcript")
         with_id = omeka.term_id("properties", "tetrak:transcribedWith")
+        similarity_id = omeka.term_id("properties", "tetrak:characterSimilarity")
+        recall_id = omeka.term_id("properties", "tetrak:wordRecall")
 
         work = []
         for item in select_items(omeka, args):
@@ -169,7 +206,11 @@ def main() -> int:
                     continue
                 work.append((item, media, backend, language))
     except OmekaError as error:
-        sys.exit(f"transcribe.py: {error}")
+        hint = ""
+        if "tetrak:" in str(error):
+            # An instance seeded before the vocabulary gained a property.
+            hint = "\nAdd the demo's newer vocabulary terms with: python3 scripts/seed.py"
+        sys.exit(f"transcribe.py: {error}{hint}")
 
     if not work:
         print("Nothing to transcribe: every selected page has a transcript.")
@@ -201,6 +242,8 @@ def main() -> int:
                 image = Path(tmp) / f"{media['o:id']}-{Path(media['o:source']).name}"
                 urllib.request.urlretrieve(media["o:original_url"], image)
                 text, engine, quality = transcribe(image, backend, tetrak_ocr)
+                reference = first_value(media, "tetrak:referenceTranscript")
+                scores = score(text, reference, tetrak_ocr) if reference else None
             except (OSError, RuntimeError) as error:
                 failures += 1
                 print(f" failed\n  {error}")
@@ -221,12 +264,25 @@ def main() -> int:
                     "type": "literal", "property_id": with_id,
                     "@value": f"Tetrak {version}, {engine}{scored}, {today}",
                 }]
+                scored_terms = [("tetrak:characterSimilarity", similarity_id),
+                                ("tetrak:wordRecall", recall_id)]
+                for (term, term_id), figure in zip(scored_terms, scores or (None, None)):
+                    if figure is None:
+                        # Scores from an earlier run would describe a
+                        # transcript that is no longer there.
+                        record.pop(term, None)
+                    else:
+                        record[term] = [{"type": "literal", "property_id": term_id,
+                                         "@value": f"{figure:.3f}"}]
                 omeka.put(f"media/{media['o:id']}", record)
             except OmekaError as error:
                 failures += 1
                 print(f" failed\n  {error}")
                 continue
             print(f" {len(text)} characters, via {engine}{scored}")
+            if scores:
+                print(f"  against the reference: character similarity {scores[0]:.3f}, "
+                      f"word recall {scores[1]:.3f}")
             if quality is not None and quality < QUALITY_FLOOR:
                 print(f"  below Tetrak's quality floor of {QUALITY_FLOOR}: "
                       "a batch run would have sent it to triage")

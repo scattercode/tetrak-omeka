@@ -43,12 +43,15 @@ Each site uses the `tetrak-reader` theme, built into the image by
 `omeka/build-theme.sh`: Omeka's default theme with
 [Octopus Viewer](https://github.com/biblibre/omeka-s-module-OctopusViewer) on
 the item page. The viewer lists an item's pages on the left, shows the
-selected page in the middle, and that page's metadata on the right, its
-reference transcript included. Page through an item and the transcript
-follows.
+selected page in the middle, and that page's transcripts on the right.
+Page through an item and the transcripts follow.
 
-The viewer shows whatever properties a page has, so a transcript written
-back to a page by a script appears beside it with nothing else to configure.
+The right-hand panel is the theme's own
+(`omeka/theme/view/octopus-viewer/site/media/info.phtml`). It leads with the
+transcripts: where a page has both Tetrak's and a reference, Tetrak's score
+against the reference comes first, then the two transcripts behind a pair of
+tabs. The page's other properties follow, so anything else a script writes
+to a page still appears there with nothing to configure.
 
 ## The manifest format
 
@@ -94,6 +97,8 @@ any collection is loaded:
 | `tetrak:referenceTranscript` | Reference transcript | A verified transcription of a page, to compare OCR with |
 | `tetrak:transcript` | Tetrak transcript | What Tetrak read, written back by `scripts/transcribe.py`; never set by the seeder |
 | `tetrak:transcribedWith` | Transcribed with | The Tetrak release, backend, quality score and date behind it |
+| `tetrak:characterSimilarity` | Character similarity | How closely Tetrak's transcript matches the reference, from 0 to 1, by Tetrak's own measure; only where there is a reference |
+| `tetrak:wordRecall` | Word recall | The fraction of the reference's words Tetrak's transcript contains, from 0 to 1; only where there is a reference |
 
 A value can take any of these forms:
 
