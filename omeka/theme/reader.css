@@ -82,6 +82,10 @@
     --rule: #d8d0c2;
     --clay: #b08d4f;
     --clay-deep: #8a6a33;
+    /* --clay is 2.8:1 on --paper, under the 3:1 that large text and state
+       indicators need, so it is for decorative rules and fills only. Text,
+       focus rings and anything marking the current state use --clay-deep,
+       4.5:1 on --paper and 4.2:1 on --paper-2. */
 
     --font-display: "Playfair Display", "Noto Serif Armenian", Georgia, serif;
     --font-body: "Source Serif 4", "Noto Serif Armenian", Georgia, serif;
@@ -292,7 +296,7 @@ header nav ul a:hover {
     }
 
     header nav > ul > li.active > a {
-        border-bottom-color: var(--clay);
+        border-bottom-color: var(--clay-deep);
     }
 
     #search {
@@ -400,7 +404,7 @@ footer {
 
 .tr-steps__n {
     display: block;
-    color: var(--clay);
+    color: var(--clay-deep);
     font-family: var(--font-display);
     font-size: 56px;
     font-weight: 700;

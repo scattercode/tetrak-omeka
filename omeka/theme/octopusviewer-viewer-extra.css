@@ -35,7 +35,7 @@
 
 .octopusviewer-media-selector-element.octopusviewer-selected {
     background-color: var(--paper-2);
-    box-shadow: inset 3px 0 0 var(--clay);
+    box-shadow: inset 3px 0 0 var(--clay-deep);
 }
 
 .octopusviewer-media-selector-element.octopusviewer-selected .octopusviewer-title {
@@ -170,7 +170,7 @@ octopusviewer-media-info {
 }
 
 .tr-tabs #tr-tab-tetrak:checked + label {
-    border-bottom-color: var(--clay);
+    border-bottom-color: var(--clay-deep);
 }
 
 .tr-tabs #tr-tab-reference:checked + label {
@@ -178,7 +178,7 @@ octopusviewer-media-info {
 }
 
 .tr-tabs input:focus-visible + label {
-    outline: 2px solid var(--clay);
+    outline: 2px solid var(--clay-deep);
     outline-offset: 2px;
 }
 

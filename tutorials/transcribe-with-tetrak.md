@@ -289,8 +289,10 @@ The great Victorina Troupe, originators and presenters of the most marvelous swo
 With a reference to compare against, the script also scores Tetrak's
 transcript, with the two measures Tetrak's own benchmark uses: **character
 similarity**, how closely the two texts match character by character, and
-**word recall**, how many of the reference's words Tetrak found. Both ignore
-case, spacing and the Armenian punctuation marks that look like Latin ones.
+**word recall**, how many of the reference's words Tetrak found. Before
+comparing, both ignore case, treat any run of spaces and line breaks as a
+single space, and count the Armenian full stop `։` and abbreviation dot `․`
+as the colon and full stop they print like. Word boundaries still count.
 
 Open the Kar-Mi Troupe poster on the Los Angeles site. The panel now leads
 with the score, 28.6% of characters matching and 46.4% of words found, and

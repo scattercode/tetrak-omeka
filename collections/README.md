@@ -34,8 +34,11 @@ python3 scripts/seed.py armenian-books    # one collection
 
 Seeding is safe to repeat: anything already in Omeka, matched on its
 identifier, is left alone, and only what is missing is added. Edits to a
-manifest therefore reach Omeka only through a reset. The one exception: an
-existing item is added to its collection's site if it is not on it already.
+manifest therefore reach Omeka only through a reset. Two exceptions, both
+additions rather than edits: an existing item is added to its collection's
+site if it is not on it already, and an existing vocabulary gains any
+properties added to `vocabularies.toml` since. An item's thumbnail is set
+only if it has none.
 
 ## The sites
 
