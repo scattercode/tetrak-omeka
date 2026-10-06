@@ -9,26 +9,32 @@ class = "dctype:Collection"
 [item_set.metadata]
 "dcterms:title" = "Los Angeles stage and screen ephemera"
 "dcterms:description" = """\
-Vaudeville posters, trade papers and postcards of Hollywood's picture \
-palaces, from about 1914 to 1945. Display type, ornament, dense \
-multi-column newsprint and small signage in photographs: the kind of \
-material that general-purpose OCR handles worst. All three items are in \
-Tetrak's evaluation corpus, with human-verified transcripts."""
+A vaudeville poster, a playbill, a trade paper and postcards of \
+Hollywood's picture palaces, from about 1914 to 1945. Display type, \
+ornament, dense multi-column newsprint and small signage in photographs: \
+the kind of material that general-purpose OCR handles worst. All five items \
+are in Tetrak's evaluation corpus; three have human-verified transcripts."""
 "dcterms:spatial" = "Los Angeles, California"
 "dcterms:temporal" = "c. 1914–1945"
 
 [site]
 slug = "los-angeles"
 title = "Los Angeles stage and screen"
-summary = "Posters, trade papers and postcards from Los Angeles's theatres and picture palaces, about 1914 to 1945, each shown beside a verified transcript."
+summary = "A poster, a playbill, a trade paper and postcards from Los Angeles's theatres and picture palaces, about 1914 to 1945, shown beside verified transcripts and Tetrak's own."
 introduction = """\
-<p>Three pieces of Los Angeles stage and screen ephemera: a vaudeville \
-poster, the front page of a theatrical trade weekly, and a postcard of \
-Hollywood Boulevard. Display type, ornament, dense newsprint and small \
-signage in a photograph are what general-purpose OCR handles worst, which is \
-why all three are in Tetrak's evaluation corpus.</p>
-<p>Open an item to see the scan beside its reference transcript, checked \
-by hand against the original.</p>"""
+<p>Five pieces of Los Angeles stage and screen ephemera: a vaudeville \
+poster, a playbill, the front page of a theatrical trade weekly, and two \
+postcards of Hollywood's picture palaces. Display type, ornament, dense \
+newsprint and small signage in a photograph are what general-purpose OCR \
+handles worst, which is why all five are in Tetrak's evaluation corpus.</p>
+<p>The poster, the trade paper and the Hollywood Boulevard postcard have \
+reference transcripts, checked by hand against the original. The playbill \
+and the Grauman's postcard have none yet: they are for Tetrak to read.</p>"""
+
+[site.feature]
+item = "kar-mi-troupe-poster"
+file = "kar-mi-troupe-poster.jpg"
+caption = "The Kar-Mi Troupe poster, about 1914: lettering of many sizes, wound around vignettes of the act."
 
 [[items]]
 identifier = "inside-facts-1930-cover"

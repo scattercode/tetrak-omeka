@@ -53,6 +53,12 @@ against the reference comes first, then the two transcripts behind a pair of
 tabs. The page's other properties follow, so anything else a script writes
 to a page still appears there with nothing to configure.
 
+Each home page is laid out by `scripts/seed.py` on Omeka's twelve-column
+grid: the introduction beside the featured page, then how the demo works,
+then a preview of the items. How the demo works is the same on every site,
+so it is one file, `home-steps.html`, beside this one. The home page is
+built once the items exist, since it features one of them.
+
 ## The manifest format
 
 ```toml
@@ -67,12 +73,18 @@ class = "dctype:Collection"           # optional resource class
 slug = "los-angeles"                  # the site is at /s/<slug>
 title = "Los Angeles stage and screen"
 summary = "…"                         # shown in lists of sites
-introduction = "<p>…</p>"             # home page HTML, above a preview of the items
+introduction = "<p>…</p>"             # home page HTML, the page's opening
 theme = "tetrak-reader"               # optional; this is the default
+
+[site.feature]                        # optional: one page shown large beside the introduction
+item = "kar-mi-troupe-poster"         # an item's identifier
+file = "kar-mi-troupe-poster.jpg"     # one of its media files, as below
+caption = "…"                         # optional
 
 [[items]]
 identifier = "kar-mi-troupe-poster"   # unique across all collections
 class = "bibo:Image"
+thumbnail = "kar-mi-troupe-poster.jpg"  # optional: the page shown in lists; else the first
 
 [items.metadata]
 "dcterms:title" = "The great Victorina Troupe …"
