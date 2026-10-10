@@ -4,6 +4,11 @@ Thanks for your interest in tetrak-omeka. This covers how we work here: the
 checks, the commit style, and the automation they feed. It applies to us as
 much as to anyone sending a pull request.
 
+If you work with a coding agent — Claude Code, Codex, Cursor, Gemini CLI or
+another — point it at `AGENTS.md`, which carries the repository's rules in
+the form such tools read. The rules there are the same as
+here, stated for an agent.
+
 ## Getting set up
 
 ```bash
