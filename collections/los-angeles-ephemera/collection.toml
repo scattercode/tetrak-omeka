@@ -60,6 +60,7 @@ file = "inside-facts-1930-cover.jpg"
 alt_text = "Front page of Inside Facts of Stage and Screen for 31 May 1930: a large masthead, the headline 'Warners to blaze path of television theatres', and a portrait of Irene Noblette between columns of small newsprint."
 
 [items.media.metadata]
+"dcterms:identifier" = "inside-facts-1930-cover.jpg"
 "dcterms:title" = "Front page"
 "tetrak:referenceTranscript" = { text_file = "transcripts/inside-facts-1930-cover.txt" }
 "dcterms:source" = { uri = "https://github.com/scattercode/tetrak/blob/5.14.0/evaluation/ocr/corpus/expected/inside-facts-1930-cover.md", label = "Reference transcript: Tetrak's evaluation corpus, human-verified" }
@@ -92,6 +93,7 @@ file = "kar-mi-troupe-poster.jpg"
 alt_text = "Red vaudeville poster headed 'See the great Kar-Mi Troupe', with vignettes of performers swallowing swords, a rifle and an electric light, framed by a grey scale and colour calibration chart."
 
 [items.media.metadata]
+"dcterms:identifier" = "kar-mi-troupe-poster.jpg"
 "dcterms:title" = "Poster"
 "tetrak:referenceTranscript" = { text_file = "transcripts/kar-mi-troupe-poster.txt" }
 "dcterms:source" = { uri = "https://github.com/scattercode/tetrak/blob/5.14.0/evaluation/ocr/corpus/expected/kar-mi-troupe-poster.md", label = "Reference transcript: Tetrak's evaluation corpus, human-verified" }
@@ -121,6 +123,7 @@ file = "hollywood-boulevard-east.jpg"
 alt_text = "Tinted linen postcard looking east along Hollywood Boulevard from above, with the pagoda roof of Grauman's Chinese Theatre in the foreground, a streetcar and cars on the road, and hills behind."
 
 [items.media.metadata]
+"dcterms:identifier" = "hollywood-boulevard-east.jpg"
 "dcterms:title" = "Front of the card"
 "tetrak:referenceTranscript" = { text_file = "transcripts/hollywood-boulevard-east.txt" }
 "dcterms:source" = { uri = "https://github.com/scattercode/tetrak/blob/5.14.0/evaluation/ocr/corpus/expected/hollywood-boulevard-east.md", label = "Reference transcript: Tetrak's evaluation corpus, human-verified" }
@@ -153,6 +156,7 @@ file = "graumans-chinese-theatre.jpg"
 alt_text = "Tinted linen postcard of Grauman's Chinese Theatre: pagoda roof, palms and arched entrances, with a marquee cut off at the right edge."
 
 [items.media.metadata]
+"dcterms:identifier" = "graumans-chinese-theatre.jpg"
 "dcterms:title" = "Front of the card"
 
 [[items]]
@@ -181,4 +185,5 @@ file = "hollywood-music-box-playbill-1926.png"
 alt_text = "Narrow playbill headed Hollywood Music Box, announcing Ken-Geki with Mitsuru Toyama and Koharu Ohara, followed by the programme and cast lists."
 
 [items.media.metadata]
+"dcterms:identifier" = "hollywood-music-box-playbill-1926.png"
 "dcterms:title" = "Playbill"

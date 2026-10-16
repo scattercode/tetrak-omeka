@@ -30,7 +30,7 @@ require '/var/www/html/bootstrap.php';
 const KEY_LABEL = 'tetrak-omeka scripts';
 
 // Modules the demo needs; their files are put in place by omeka/Dockerfile.
-const MODULES = ['OctopusViewer', 'ExtractText'];
+const MODULES = ['OctopusViewer', 'ExtractText', 'CSVImport'];
 
 function fail(string $message): void
 {

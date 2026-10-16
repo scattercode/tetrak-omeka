@@ -72,6 +72,18 @@ RUN curl -fsSL -o /tmp/extracttext.zip \
     && unzip -q /tmp/extracttext.zip -d /var/www/html/modules \
     && rm /tmp/extracttext.zip
 
+# CSV Import, Omeka's own module for loading a spreadsheet: here, Tetrak's
+# batch manifest, matched to the media it describes by their file name in
+# dcterms:identifier, puts every transcript in Omeka without a script
+# (tutorials/import-a-manifest.md). Pinned the same way.
+ARG CSVIMPORT_VERSION=2.6.2
+ARG CSVIMPORT_SHA256=726b371bb5d00dd3fed0f87a8f54ee70f38fee37a7765f485830e310729340a5
+RUN curl -fsSL -o /tmp/csvimport.zip \
+        "https://github.com/omeka-s-modules/CSVImport/releases/download/v${CSVIMPORT_VERSION}/CSVImport-${CSVIMPORT_VERSION}.zip" \
+    && echo "${CSVIMPORT_SHA256}  /tmp/csvimport.zip" | sha256sum -c - \
+    && unzip -q /tmp/csvimport.zip -d /var/www/html/modules \
+    && rm /tmp/csvimport.zip
+
 # The sites' theme: the default theme with the viewer on its item pages.
 COPY build-theme.sh theme/ /tmp/tetrak-reader/
 RUN sh /tmp/tetrak-reader/build-theme.sh /tmp/tetrak-reader \

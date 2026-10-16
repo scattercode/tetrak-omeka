@@ -143,7 +143,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr
           python3 -m venv /tmp/tetrak
-          /tmp/tetrak/bin/pip install 'tetrak==5.14.1'
+          /tmp/tetrak/bin/pip install 'tetrak==5.16.0'
 
       - name: Transcribe a page and write it back
         run: |
@@ -196,6 +196,117 @@ jobs:
           found = [i["o:id"] for i in omeka.get("items", fulltext_search=word)]
           assert item["o:id"] in found, f"searching for {word!r} did not find the playbill"
           print(f"{len(text)} characters extracted; {word!r} finds the playbill")
+          EOF
+
+      # tutorials/import-a-manifest.md: Tetrak's batch manifest loaded by CSV
+      # Import, through the same two admin forms the guide fills in, posted
+      # over HTTP. Each row finds its media by file name in dcterms:identifier;
+      # the ruined scan has no media and is skipped.
+      - name: A batch manifest imports with CSV Import
+        run: |
+          mkdir -p /tmp/folder/workspace/scans
+          cp collections/los-angeles-ephemera/*.jpg collections/los-angeles-ephemera/*.png \
+             folder/inside-facts-1930-cover-ruined.jpg /tmp/folder/workspace/scans/
+          (cd /tmp/folder && /tmp/tetrak/bin/tetrak-ocr batch --backend tesseract --manifest > /dev/null)
+          set -a; . ./.env; . ./.omeka-api.env; set +a
+          MANIFEST=/tmp/folder/workspace/manifest.csv python3 - <<'EOF'
+          import csv, http.cookiejar, json, os, time, urllib.parse, urllib.request, uuid
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          base = os.environ["OMEKA_URL"]
+          auth = (f"key_identity={os.environ['OMEKA_KEY_IDENTITY']}"
+                  f"&key_credential={os.environ['OMEKA_KEY_CREDENTIAL']}")
+          manifest = Path(os.environ["MANIFEST"])
+          browser = urllib.request.build_opener(
+              urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+
+          class Hidden(HTMLParser):
+              """A form's hidden inputs: its CSRF token, and on the mapping
+              screen the uploaded file's details, carried to the next step."""
+              def __init__(self, html):
+                  super().__init__(); self.fields = {}; self.feed(html)
+              def handle_starttag(self, tag, attrs):
+                  a = dict(attrs)
+                  if (tag == "input" and a.get("type") == "hidden" and a.get("name")
+                          and "disabled" not in a and not a["name"].startswith("column-")):
+                      self.fields[a["name"]] = a.get("value") or ""
+
+          def page(path, fields=None, upload=None):
+              if fields is None:
+                  return browser.open(base + path).read().decode()
+              if upload is None:
+                  body = urllib.parse.urlencode(fields).encode()
+                  kind = "application/x-www-form-urlencoded"
+              else:
+                  boundary = uuid.uuid4().hex
+                  body = b"".join(
+                      f'--{boundary}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'.encode()
+                      for k, v in fields.items())
+                  body += (f'--{boundary}\r\nContent-Disposition: form-data; name="{upload[0]}"; '
+                           f'filename="{upload[1].name}"\r\nContent-Type: text/csv\r\n\r\n').encode()
+                  body += upload[1].read_bytes() + f"\r\n--{boundary}--\r\n".encode()
+                  kind = f"multipart/form-data; boundary={boundary}"
+              request = urllib.request.Request(base + path, body, {"Content-Type": kind})
+              return browser.open(request).read().decode()
+
+          def api(path):
+              return json.load(urllib.request.urlopen(f"{base}/api/{path}&{auth}"))
+
+          page("/login", {**Hidden(page("/login")).fields, "submit": "Log in",
+                          "email": os.environ["OMEKA_ADMIN_EMAIL"],
+                          "password": os.environ["OMEKA_ADMIN_PASSWORD"]})
+          jobs = len(api("jobs?per_page=1000"))
+
+          # Screen one: the file, as Media.
+          token = {k: v for k, v in Hidden(page("/admin/csvimport")).fields.items() if "csrf" in k}
+          mapping = page("/admin/csvimport/map",
+                         {**token, "resource_type": "media", "delimiter": ",", "enclosure": '"',
+                          "automap_check_names_alone": "0", "comment": ""},
+                         upload=("source", manifest))
+          assert "transcript" in mapping, "CSV Import did not read the manifest's columns"
+
+          # Screen two: the guide's three mappings and its advanced settings.
+          with manifest.open(newline="", encoding="utf-8") as handle:
+              rows = list(csv.DictReader(handle))
+          column = list(rows[0]).index
+          prop = lambda term: api(f"properties?term={term}")[0]["o:id"]
+          page("/admin/csvimport/map", {
+              **Hidden(mapping).fields,
+              f"column-property[{column('file')}][]": prop("dcterms:identifier"),
+              f"column-property[{column('transcript')}][]": prop("tetrak:transcript"),
+              f"column-property[{column('engine')}][]": prop("tetrak:transcribedWith"),
+              "basic-settings[o:is_public]": 1,
+              "basic-settings[multivalue_separator]": ",",
+              "advanced-settings[action]": "revise",
+              "advanced-settings[identifier_column]": column("file"),
+              "advanced-settings[identifier_property]": "dcterms:identifier",
+              "advanced-settings[action_unidentified]": "skip",
+              "advanced-settings[rows_by_batch]": 20,
+          })
+
+          for _ in range(30):
+              found = api("jobs?per_page=1000")
+              if len(found) > jobs and found[-1]["o:status"] not in ("starting", "in_progress"):
+                  break
+              time.sleep(2)
+          job = found[-1]
+          assert job["o:job_class"].startswith("CSVImport") and job["o:status"] == "completed", job
+
+          for row in rows:
+              query = urllib.parse.urlencode({
+                  "property[0][property]": "dcterms:identifier",
+                  "property[0][type]": "eq", "property[0][text]": row["file"]})
+              media = api(f"media?{query}")
+              if row["file"].endswith("-ruined.jpg"):
+                  assert not media, "the ruined scan has no media to update"
+                  continue
+              (media,) = media
+              # CSV Import trims the trailing newlines a transcript ends with.
+              assert media["tetrak:transcript"][0]["@value"] == row["transcript"].strip(), row["file"]
+              assert media["tetrak:transcribedWith"][0]["@value"] == row["engine"], row["file"]
+              assert media.get("dcterms:title"), f"the import lost {row['file']}'s title"
+              print(f"{row['file']}: {len(row['transcript'])} characters")
           EOF
 
       - name: Logs

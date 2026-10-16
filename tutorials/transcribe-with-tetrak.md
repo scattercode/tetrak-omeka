@@ -75,7 +75,7 @@ pinned to a release, with three extras:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install 'tetrak[armenian,qa,vision]==5.14.1'
+pip install 'tetrak[armenian,qa,vision]==5.16.0'
 ```
 
 The extras matter: a plain `pip install tetrak` installs Tetrak without the
@@ -221,7 +221,7 @@ python3 scripts/transcribe.py
 ```
 
 ```text
-Using /path/to/tetrak-omeka/.venv/bin/tetrak-ocr (Tetrak 5.14.1)
+Using /path/to/tetrak-omeka/.venv/bin/tetrak-ocr (Tetrak 5.16.0)
 Կիկոսի մահը / Page 246: easyocr-hy ... 799 characters, via easyocr-hy
 Կիկոսի մահը / Page 247: easyocr-hy ... 809 characters, via easyocr-hy
 Կիկոսի մահը / Page 248: easyocr-hy ... 983 characters, via easyocr-hy
@@ -243,7 +243,7 @@ to install, rather than failing page by page:
 ```text
 transcribe.py: this tetrak-ocr cannot run auto-local, easyocr-hy.
 Install the extras into the environment it belongs to:
-    pip install 'tetrak[armenian,qa,vision]==5.14.1'
+    pip install 'tetrak[armenian,qa,vision]==5.16.0'
 and check that `which tetrak-ocr` points into that environment.
 ```
 
@@ -252,7 +252,7 @@ and check that `which tetrak-ocr` points into that environment.
 Reload *The Death of Kikos*. The panel beside each page now leads with
 Tetrak's transcript, marked *Read by Tetrak · not checked*, and under that
 label, what produced it: the Tetrak release, the engine, the quality score
-where there is one, and the date, such as *Tetrak 5.14.1, auto-local →
+where there is one, and the date, such as *Tetrak 5.16.0, auto-local →
 vision, quality 0.24, 2026-10-04*. A transcript without its provenance is
 hard to trust or to redo.
 
@@ -363,7 +363,7 @@ The virtual environment survives a reset, so the next run starts at step 4.
 Leave out the `vision` extra, which is macOS only:
 
 ```bash
-pip install 'tetrak[armenian,qa]==5.14.1'
+pip install 'tetrak[armenian,qa]==5.16.0'
 ```
 
 `auto-local` then chooses between EasyOCR and Tesseract instead of Vision,
