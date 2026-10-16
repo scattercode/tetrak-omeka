@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Transcribe pages in Omeka with Tetrak, and write the transcripts back.
 
-For each page (each media) that has no transcript yet, this downloads the
+For each page (each image media) that has no transcript yet, this downloads the
 image from Omeka, runs the Tetrak CLI on it, and saves the result to the page
 as its "Tetrak transcript" (tetrak:transcript), with "Transcribed with"
 recording the Tetrak release, backend and date. Where the page has a
@@ -200,6 +200,11 @@ def main() -> int:
             language = first_value(item, "dcterms:language")
             backend = args.backend or (ARMENIAN_BACKEND if language == "hy" else DEFAULT_BACKEND)
             for media in omeka.get("media", item_id=item["o:id"], per_page=1000):
+                # Pages are images. A searchable PDF uploaded beside one
+                # (tutorials/searchable-pdf-drop-in.md) already carries its
+                # transcript, so it is not read again.
+                if not (media.get("o:media_type") or "").startswith("image/"):
+                    continue
                 if media.get("tetrak:transcript") and not args.redo:
                     continue
                 if media.get("tetrak:referenceTranscript") and not args.include_reference:
