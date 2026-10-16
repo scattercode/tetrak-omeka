@@ -208,7 +208,11 @@ jobs:
           cp collections/los-angeles-ephemera/*.jpg collections/los-angeles-ephemera/*.png \
              folder/inside-facts-1930-cover-ruined.jpg /tmp/folder/workspace/scans/
           (cd /tmp/folder && /tmp/tetrak/bin/tetrak-ocr batch --backend tesseract --manifest > /dev/null)
-          set -a; . ./.env; . ./.omeka-api.env; set +a
+          set -a; . ./.omeka-api.env; set +a
+          # .env is for Compose, not the shell: a value in it has a space.
+          OMEKA_ADMIN_EMAIL=$(sed -n 's/^OMEKA_ADMIN_EMAIL=//p' .env)
+          OMEKA_ADMIN_PASSWORD=$(sed -n 's/^OMEKA_ADMIN_PASSWORD=//p' .env)
+          export OMEKA_ADMIN_EMAIL OMEKA_ADMIN_PASSWORD
           MANIFEST=/tmp/folder/workspace/manifest.csv python3 - <<'EOF'
           import csv, http.cookiejar, json, os, time, urllib.parse, urllib.request, uuid
           from html.parser import HTMLParser
