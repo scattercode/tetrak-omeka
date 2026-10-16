@@ -103,6 +103,12 @@ to begin from it.
   come from Tetrak's own `tetrak_ocr.accuracy`, so they mean what Tetrak's
   benchmark means. Never write one transcript over the other: the demo is
   the comparison.
+- **`folder/` is the no-server scene**, not a collection: the one scan
+  ruined on purpose so Tetrak's quality gate sends it to triage, made from
+  the Inside Facts page by `folder/ruin.py` and recorded in
+  `folder/SOURCES.md`. It must keep scoring under the gate's 0.10; if a
+  Tetrak release reads it better, ruin it further and re-run
+  `tutorials/a-folder-of-scans.md`, which quotes real output.
 - **The untranscribed items are the demo, not gaps.** Grauman's, the
   playbill, *The Death of Kikos* and the medical encyclopedia have no
   reference transcript on purpose, for `scripts/transcribe.py` to fill. Do

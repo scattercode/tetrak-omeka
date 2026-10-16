@@ -19,7 +19,8 @@ localhost, and nothing here should be pointed at material that matters.
 | A site for each collection, with a page reader | Done: each page beside its transcripts |
 | A script that transcribes an Omeka collection with Tetrak | Done: `scripts/transcribe.py` |
 | A searchable PDF found by Omeka's own search, with no integration | Done: Extract Text in the image, and a tutorial |
-| Tutorials | Two, in `tutorials/`: [transcribing a collection with Tetrak](tutorials/transcribe-with-tetrak.md), and [making a page searchable with nothing but a PDF](tutorials/searchable-pdf-drop-in.md). Possibly a GitHub Pages site later |
+| A folder of scans made searchable with no server, and a scan for triage | Done: `folder/` and a tutorial |
+| Tutorials | Three, in `tutorials/`: [transcribing a collection with Tetrak](tutorials/transcribe-with-tetrak.md), [making a page searchable with nothing but a PDF](tutorials/searchable-pdf-drop-in.md), and [making a folder of scans searchable with no server](tutorials/a-folder-of-scans.md). Possibly a GitHub Pages site later |
 
 ## Running Omeka
 
