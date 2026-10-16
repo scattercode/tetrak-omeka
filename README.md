@@ -18,7 +18,8 @@ localhost, and nothing here should be pointed at material that matters.
 | Scripts that reset, install and seed Omeka | Done: see below |
 | A site for each collection, with a page reader | Done: each page beside its transcripts |
 | A script that transcribes an Omeka collection with Tetrak | Done: `scripts/transcribe.py` |
-| Tutorials | One, in `tutorials/`: [transcribing a collection with Tetrak](tutorials/transcribe-with-tetrak.md). Possibly a GitHub Pages site later |
+| A searchable PDF found by Omeka's own search, with no integration | Done: Extract Text in the image, and a tutorial |
+| Tutorials | Two, in `tutorials/`: [transcribing a collection with Tetrak](tutorials/transcribe-with-tetrak.md), and [making a page searchable with nothing but a PDF](tutorials/searchable-pdf-drop-in.md). Possibly a GitHub Pages site later |
 
 ## Running Omeka
 
@@ -63,6 +64,14 @@ It is pinned in `omeka/Dockerfile` like Omeka itself, and placed by the
 `tetrak-reader` theme, which `omeka/build-theme.sh` derives from Omeka's
 default theme at build time and dresses in tetrak.dev's design: its palette,
 and its fonts, self-hosted so the demo works offline.
+
+[Extract Text](https://omeka.org/s/modules/ExtractText/), Omeka's own module
+for making files searchable, is installed beside it, with `pdftotext` in the
+image for it to call. It reads the text layer of any PDF uploaded and puts it
+where Omeka's search looks, which is what lets a searchable PDF from Tetrak be
+found with no integration written for it:
+[the second tutorial](tutorials/searchable-pdf-drop-in.md) shows it. It is
+pinned the same way.
 
 Without the scripts, Omeka still works the usual way: `docker compose up -d
 --build`, and the first visit runs the web installer.

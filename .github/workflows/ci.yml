@@ -168,6 +168,36 @@ jobs:
           print(media["tetrak:transcribedWith"][0]["@value"])
           EOF
 
+      # tutorials/searchable-pdf-drop-in.md: Tetrak's searchable PDF uploaded
+      # as a plain file, read by Extract Text's pdftotext, found by Omeka's own
+      # search. The word searched for is taken from the extracted text, so a
+      # different Tesseract reading the sheet differently does not fail it.
+      - name: A searchable PDF is found by Omeka's search
+        run: |
+          /tmp/tetrak/bin/tetrak-ocr ocr \
+            collections/los-angeles-ephemera/hollywood-music-box-playbill-1926.png \
+            --pdf /tmp/playbill.pdf > /dev/null
+          set -a; . ./.omeka-api.env; set +a
+          PYTHONPATH=scripts python3 - <<'EOF'
+          import json, re
+          from pathlib import Path
+          from seed import Omeka, credentials
+
+          omeka = Omeka(*credentials())
+          item = omeka.find_by_identifier("items", "hollywood-music-box-playbill-1926")
+          media = omeka.post_with_file(
+              "media", {"o:ingester": "upload", "file_index": 0, "o:item": {"o:id": item["o:id"]}},
+              Path("/tmp/playbill.pdf"),
+          )
+          text = (media.get("extracttext:extracted_text") or [{}])[0].get("@value", "")
+          assert text, "Extract Text read nothing from the PDF"
+          described = json.dumps(item).lower()
+          word = next(w for w in re.findall(r"[A-Za-z]{7,}", text) if w.lower() not in described)
+          found = [i["o:id"] for i in omeka.get("items", fulltext_search=word)]
+          assert item["o:id"] in found, f"searching for {word!r} did not find the playbill"
+          print(f"{len(text)} characters extracted; {word!r} finds the playbill")
+          EOF
+
       - name: Logs
         if: failure()
         run: docker compose logs

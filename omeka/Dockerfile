@@ -20,13 +20,15 @@ ARG OMEKA_SHA256=b53c9eeb5e8479c6991de3c47197abac59be577884e7224f92f87758f2f14f7
 # pdo_mysql, mbstring, xml and fileinfo are what Omeka's composer.json requires;
 # mbstring, xml and fileinfo already ship with the PHP image. ImageMagick is the
 # thumbnailer Omeka finds on its own; without one, uploads get no derivatives.
+# poppler-utils is for pdftotext, which Extract Text uses to read a PDF's text
+# layer (below).
 # The upgrade applies Debian's security fixes, which the official PHP image
 # often lags: without it Trivy found 48 HIGH vulnerabilities with fixes
 # available, all in the base packages. Omeka and PHP stay pinned; only the
 # operating system's patches float.
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends imagemagick unzip \
+    && apt-get install -y --no-install-recommends imagemagick poppler-utils unzip \
     && docker-php-ext-install pdo_mysql \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
@@ -57,6 +59,18 @@ RUN curl -fsSL -o /tmp/octopusviewer.zip \
     && echo "${OCTOPUSVIEWER_SHA256}  /tmp/octopusviewer.zip" | sha256sum -c - \
     && unzip -q /tmp/octopusviewer.zip -d /var/www/html/modules \
     && rm /tmp/octopusviewer.zip
+
+# Extract Text, Omeka's own module for making files searchable: on upload it
+# reads a PDF's text layer with pdftotext into the media, and gathers it onto
+# the item, where Omeka's search finds it. This is how a searchable PDF from
+# Tetrak is indexed with no integration written for it. Pinned the same way.
+ARG EXTRACTTEXT_VERSION=2.1.0
+ARG EXTRACTTEXT_SHA256=a1d1b09f0c2d69be5dedcb0a3b4eda5b3de243421a5334ff98f88d6667f552bf
+RUN curl -fsSL -o /tmp/extracttext.zip \
+        "https://github.com/omeka-s-modules/ExtractText/releases/download/v${EXTRACTTEXT_VERSION}/ExtractText-${EXTRACTTEXT_VERSION}.zip" \
+    && echo "${EXTRACTTEXT_SHA256}  /tmp/extracttext.zip" | sha256sum -c - \
+    && unzip -q /tmp/extracttext.zip -d /var/www/html/modules \
+    && rm /tmp/extracttext.zip
 
 # The sites' theme: the default theme with the viewer on its item pages.
 COPY build-theme.sh theme/ /tmp/tetrak-reader/

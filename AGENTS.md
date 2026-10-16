@@ -87,6 +87,15 @@ to begin from it.
   `OFL.txt`; never link a font CDN, since the demo has to work offline.
   Tetrak's faces are latin subsets, so Armenian falls through to Noto Serif
   Armenian in every font stack.
+- **Extract Text is the searchable-PDF path, and needs no code of ours.**
+  Pinned in `omeka/Dockerfile` with `poppler-utils` for `pdftotext`, and
+  installed by `omeka/setup.php`. It reads an uploaded PDF's text layer into
+  the media's `extracttext:extracted_text` and gathers it onto the item.
+  `scripts/transcribe.py` reads image media only, so a PDF beside a page is
+  never sent to Tetrak. A media `POST`ed on its own gets no position, so Omeka
+  shows it first until the item is `PUT` with `o:media` in order; never send
+  a file in a multipart `PUT` of an item, because PHP parses uploads only on
+  `POST` and the item is saved with no values.
 - **Reference transcripts are `tetrak:referenceTranscript`; Tetrak's are
   `tetrak:transcript`**, with `tetrak:transcribedWith` beside it, and
   `tetrak:characterSimilarity` and `tetrak:wordRecall` where the page has a
