@@ -96,6 +96,16 @@ to begin from it.
   shows it first until the item is `PUT` with `o:media` in order; never send
   a file in a multipart `PUT` of an item, because PHP parses uploads only on
   `POST` and the item is saved with no values.
+- **CSV Import is the no-code path for Tetrak's manifest.** Pinned in
+  `omeka/Dockerfile` and installed by `omeka/setup.php`. It can update
+  existing resources only by a property value or the internal id, never by
+  a media's `o:source`, so each Los Angeles media has its file name as
+  `dcterms:identifier`, the value in the manifest's `file` column. Import as
+  *Media* with the *Revise* action: an empty cell, as a triaged row's
+  transcript is, leaves the value already there. Columns split on the
+  multivalue separator only when a column is configured to, so transcripts
+  with commas stay whole. It strips a UTF-8 byte-order mark. Its jobs run in
+  the background; CI drives the same two admin forms over HTTP.
 - **Reference transcripts are `tetrak:referenceTranscript`; Tetrak's are
   `tetrak:transcript`**, with `tetrak:transcribedWith` beside it, and
   `tetrak:characterSimilarity` and `tetrak:wordRecall` where the page has a

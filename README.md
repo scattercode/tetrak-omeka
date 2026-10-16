@@ -20,7 +20,8 @@ localhost, and nothing here should be pointed at material that matters.
 | A script that transcribes an Omeka collection with Tetrak | Done: `scripts/transcribe.py` |
 | A searchable PDF found by Omeka's own search, with no integration | Done: Extract Text in the image, and a tutorial |
 | A folder of scans made searchable with no server, and a scan for triage | Done: `folder/` and a tutorial |
-| Tutorials | Three, in `tutorials/`: [transcribing a collection with Tetrak](tutorials/transcribe-with-tetrak.md), [making a page searchable with nothing but a PDF](tutorials/searchable-pdf-drop-in.md), and [making a folder of scans searchable with no server](tutorials/a-folder-of-scans.md). Possibly a GitHub Pages site later |
+| Tetrak's CSV manifest imported into Omeka with no code | Done: CSV Import in the image, and a tutorial |
+| Tutorials | Four, in `tutorials/`: [transcribing a collection with Tetrak](tutorials/transcribe-with-tetrak.md), [making a page searchable with nothing but a PDF](tutorials/searchable-pdf-drop-in.md), [making a folder of scans searchable with no server](tutorials/a-folder-of-scans.md), and [importing that folder's transcripts into Omeka from a spreadsheet](tutorials/import-a-manifest.md). Possibly a GitHub Pages site later |
 
 ## Running Omeka
 
@@ -73,6 +74,14 @@ where Omeka's search looks, which is what lets a searchable PDF from Tetrak be
 found with no integration written for it:
 [the second tutorial](tutorials/searchable-pdf-drop-in.md) shows it. It is
 pinned the same way.
+
+[CSV Import](https://omeka.org/s/modules/CSVImport/), Omeka's own module for
+loading a spreadsheet, is the third. Tetrak's batch mode can write a CSV
+manifest, a row for each scan with its transcript, and CSV Import puts those
+transcripts on the matching media from Omeka's admin screens, with no script:
+[the fourth tutorial](tutorials/import-a-manifest.md). It matches a row to a
+media by `dcterms:identifier`, so each media in the Los Angeles collection
+carries its file name there. Pinned the same way.
 
 Without the scripts, Omeka still works the usual way: `docker compose up -d
 --build`, and the first visit runs the web installer.
@@ -139,7 +148,7 @@ repository, never as a sibling checkout of it: from PyPI, where the package
 is `tetrak` (the command is `tetrak-ocr`), with the extras the demo uses:
 
 ```bash
-pip install 'tetrak[armenian,qa,vision]==5.14.1'
+pip install 'tetrak[armenian,qa,vision]==5.16.0'
 ```
 
 Pinning a tag rather than a checkout keeps this demo working for anyone who

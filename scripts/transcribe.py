@@ -24,7 +24,7 @@ Prerequisites: Python 3.11 or later; a seeded Omeka and its API key in
 .omeka-api.env (scripts/reset.sh); and Tetrak installed, so that tetrak-ocr
 is on the PATH (or named with --tetrak-ocr). For the default backends:
 
-    pip install 'tetrak[armenian,qa,vision]==5.14.1'
+    pip install 'tetrak[armenian,qa,vision]==5.16.0'
 
 Before transcribing anything it checks, with `tetrak-ocr backends`, that the
 backends it is about to use are installed, and says which tetrak-ocr it is
@@ -53,7 +53,7 @@ from pathlib import Path
 
 from seed import Omeka, OmekaError, credentials
 
-INSTALL = "pip install 'tetrak[armenian,qa,vision]==5.14.1'"
+INSTALL = "pip install 'tetrak[armenian,qa,vision]==5.16.0'"
 ARMENIAN_BACKEND = "easyocr-hy"
 DEFAULT_BACKEND = "auto-local"
 # Tetrak's batch mode sends a transcript scoring below this to triage rather

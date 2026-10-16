@@ -6,9 +6,9 @@ Tetrak command, and the laptop's own file search. For a lone researcher or a
 small archive with no collections system, this is the whole job.
 
 At the end, a word printed on a scan, and nowhere else, is found by the
-operating system's search. One scan in the folder is ruined on purpose, and
-Tetrak puts it aside for a person to look at rather than passing off a bad
-reading as done.
+operating system's search, and a spreadsheet lists every scan with what was
+read from it. One scan in the folder is ruined on purpose, and Tetrak puts it
+aside for a person to look at rather than passing off a bad reading as done.
 
 It takes about ten minutes once Tetrak is installed, most of it reading.
 
@@ -43,14 +43,15 @@ of *Inside Facts*, again, shrunk, blurred and speckled until it is unreadable.
 
 ```bash
 cd ~/tetrak-folder
-tetrak-ocr batch --backend auto-local --format markdown,pdf
+tetrak-ocr batch --backend auto-local --format markdown,pdf --manifest
 ```
 
 `auto-local` reads each page with every local engine, scores what each
 produced, and keeps the best. `--format markdown,pdf` asks for two things per
 scan: a text sidecar, and a searchable PDF, the scan with the transcript laid
-over it as an invisible text layer. It prints a table of scores for each page
-as it goes, and ends:
+over it as an invisible text layer. `--manifest` adds a row for each scan to
+`workspace/manifest.csv`. It prints a table of scores for each page as it
+goes, and ends:
 
 ```text
 Triaged (1): inside-facts-1930-cover-ruined.jpg
@@ -66,6 +67,7 @@ find workspace -type f | sort
 ```
 
 ```text
+workspace/manifest.csv
 workspace/processed/graumans-chinese-theatre.jpg
 workspace/processed/graumans-chinese-theatre.md
 workspace/processed/graumans-chinese-theatre.pdf
@@ -105,6 +107,7 @@ workspace/triage/inside-facts-1930-cover-ruined.md
   waits for a person instead of sitting in `processed/` looking finished.
   What to do with it is a person's call: find a better copy, rescan it, or
   try an engine that reads more, such as `--backend claude`.
+- **`manifest.csv`** is the run in a table: step 5.
 - **`telemetry.jsonl`** is the run's log, a line for each step of each
   file, to `tail` while a long batch runs.
 
@@ -133,13 +136,39 @@ The same PDFs can go anywhere else that indexes PDFs: a shared drive, a
 document management system, or a collections system, as
 [the searchable-PDF guide](searchable-pdf-drop-in.md) shows with Omeka.
 
-## What is not here yet
+## 5. Open the manifest
 
-The plan for this scene also has a CSV manifest: one row per scan, with its
-file name, transcript, the engine that read it and whether it passed the
-quality gate, to open in a spreadsheet or import into a collections system.
-Tetrak does not write one yet. It is being added to Tetrak, and this guide
-will use it when it is.
+`workspace/manifest.csv` has a row for every scan, the ruined one included:
+
+| file | status | engine | quality | quality_gate | note |
+|---|---|---|---|---|---|
+| graumans-chinese-theatre.jpg | processed | vision | 0.2356 | passed | |
+| hollywood-boulevard-east.jpg | processed | vision | 0.2355 | passed | |
+| hollywood-music-box-playbill-1926.png | processed | vision | 0.1626 | passed | |
+| inside-facts-1930-cover-ruined.jpg | triage | vision | 0.0724 | failed | Best transcript (vision, score=0.0724) is below threshold 0.1000 |
+| inside-facts-1930-cover.jpg | processed | tesseract-auto | 0.1734 | passed | |
+| kar-mi-troupe-poster.jpg | processed | vision | 0.2187 | passed | |
+
+That is six of its columns. The others are the backend asked for, the
+transcript itself, the files written, where the scan is now, the run's id,
+when it finished and the Tetrak release; Tetrak's
+[command-line guide](https://scattercode.github.io/tetrak/guide/command-line.html#the-csv-manifest-beta) describes each.
+A triaged row has no transcript, so a reading the quality gate rejected is
+never taken for a finished one. Sorted by `status`, the sheet is the list of
+what still needs a person.
+
+Open it in Numbers, LibreOffice or Google Sheets as it is. In Excel, use
+*Data > From Text/CSV* rather than double-clicking it: the file is UTF-8, and
+a double-click reads it in the computer's local encoding, which garbles any
+transcript that is not in plain English letters.
+
+Run the batch again with more scans and their rows are added to the end, so
+the sheet grows with the folder. The manifest is a beta in Tetrak: its
+columns may change, so rely on their names, not their order.
+
+The same file is what a collections system imports:
+[the next guide](import-a-manifest.md) puts these transcripts into Omeka with
+its own CSV Import, without a line of code.
 
 ## On Linux
 
